@@ -678,8 +678,8 @@ void Start()
         else
         {
             accumulators[controlRegister].set(addr);
+            timeLeft -= 26 * cycleTime;
         }
-        timeLeft -= 26 * cycleTime;
     }
 
     private void processOrder5()
