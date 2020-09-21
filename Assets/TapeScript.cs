@@ -227,4 +227,8 @@ public class TapeScript : MonoBehaviour
         return value;
     }
 
+    public bool isRBusy()
+    {
+        return (currentPosition >= length);
+    }
 }

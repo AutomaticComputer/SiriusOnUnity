@@ -25,6 +25,8 @@ public class CPUScript : MonoBehaviour
 
     private float timeLeft;
     private const float cycleTime = 0.00008f;
+
+    private uint delayLinePos;
     
     private byte siriusOpcodeLow, siriusOpcodeHigh, accA, accB;
     private BCD6 siriusOperand;
@@ -33,9 +35,9 @@ public class CPUScript : MonoBehaviour
     private BCD10 acceptedInput;
 
     private bool flagInputAccepted;
-    private bool isStopped99, isStoppedKB, isStopped6910, isStoppedByError, isRetrying, isRBusy, isPBusy, flagOVR;
-
-    private UInt64[] testProgram;
+    private bool isStopped99, isStoppedKB, isStopped6910, isStoppedByError, flagOVR, 
+        isWaitingR, isWaitingP, 
+        isRBusy, isPBusy, isRetrying, isRetryingForFrame;
 
     private byte[, ] mask66_68, mask65_67;
 
@@ -50,13 +52,7 @@ void Start()
         siriusOperand = new BCD6();
         effectiveOperand = new BCD10();
 
-        testProgram = new UInt64[] {
-            0x0000071470L, 0x0000081480L, 0x0000091490L, 0x0000007597L, 0x0000009900L, 0x0000000000L, 0x0000000000L,
-            0x7000000000L, 0x5000000000L, 0x1000000000L, 0x0000000000L, 0x0000000000L
-        };
         mainStore = new UInt64[mainStoreSize];
-        for (int i = 0; i < testProgram.Length; i++)
-            mainStore[i] = testProgram[i];
 
         primaryInputMicroProgram = new UInt64[] {
             0x0000007140L, 0x0000065440L, 0x0000001544L, 0x0000001544L, 0x0000003954L,
@@ -97,12 +93,16 @@ void Start()
         isStoppedKB = false;
         isStopped6910 = false;
         isRetrying = false;
-        isRBusy = false;
-        isPBusy = false;
+        isRetryingForFrame = false;
+        isWaitingR = false;
+        isWaitingP = false;
+        isRBusy = false; // only when no tape
+        isPBusy = false; // always false
         flagOVR = false;
 
         flagInputAccepted = false;
 
+        delayLinePos = 0;
         timeLeft = 0.0f;
     }
 
@@ -115,64 +115,67 @@ void Start()
 // Update is called once per frame
     void Update()
     {
-        int a;
         bool flagInterrupt = false;
 
-        a = controlBoxScript.selectedAccumulator();
         kbValue = controlBoxScript.getKeyboard();
-
-        if (controlBoxScript.flagContinueKey)
-        {
-            flagContinue = true;
-            isRetrying = false;
-            isRBusy = false;
-            isPBusy = false;
-            controlBoxScript.flagContinueKey = false;
-        }
-
-        if (controlBoxScript.flagInterruptKey)
-        {
-            flagInterrupt = true;
-            controlBoxScript.flagInterruptKey = false;
-        }
 
         if (isPrimaryInput)
         {
             timeLeft += Time.deltaTime;
+            isRetryingForFrame = isRetrying;
 
-            //            for (int n = 0; isPrimaryInput && n < Time.deltaTime * 4000; n++) // 4000 instructions per second
             while (isPrimaryInput && timeLeft > 0.0f) 
             {
                 processOneOrder();
             }
-        } 
+        }
         else
         {
-            runPressed = controlBoxScript.flagRun;
-            manualPressed = controlBoxScript.flagManual;
-            kbWaitPressed = controlBoxScript.flagKBWait;
-
-            if (controlBoxScript.flagClearControlKey)
+            if (!isRetryingForFrame)
             {
-                controlBoxScript.flagClearControlKey = false;
-                if (!runPressed)
-                    accumulators[controlRegister].setUInt64(0);
+                runPressed = controlBoxScript.flagRun;
+                manualPressed = controlBoxScript.flagManual;
+                kbWaitPressed = controlBoxScript.flagKBWait;
+
+                if (controlBoxScript.flagContinueKey)
+                {
+                    flagContinue = true;
+                    controlBoxScript.flagContinueKey = false;
+                }
+
+                if (controlBoxScript.flagInterruptKey)
+                {
+                    flagInterrupt = true;
+                    controlBoxScript.flagInterruptKey = false;
+                }
+                if (controlBoxScript.flagClearControlKey)
+                {
+                    controlBoxScript.flagClearControlKey = false;
+                    if (!runPressed)
+                        accumulators[controlRegister].setUInt64(0);
+                }
             }
 
             if (manualPressed)
             {
-                if (controlBoxScript.flagPrimaryInputKey)
+                if (!isRetryingForFrame)
                 {
-                    controlBoxScript.flagPrimaryInputKey = false;
-                    isPrimaryInput = true;
-                    primaryInputPC = 0;
+                    if (controlBoxScript.flagPrimaryInputKey)
+                    {
+                        controlBoxScript.flagPrimaryInputKey = false;
+                        isPrimaryInput = true;
+                        primaryInputPC = 0;
+                    }
+                    if (controlBoxScript.flagAcceptInputKey)
+                    {
+                        controlBoxScript.flagAcceptInputKey = false;
+                        flagInputAccepted = true;
+                        acceptedInput = new BCD10(kbValue);
+                    }
                 }
-                if (controlBoxScript.flagAcceptInputKey)
-                {
-                    controlBoxScript.flagAcceptInputKey = false;
-                    flagInputAccepted = true;
-                    acceptedInput = new BCD10(kbValue);
-                }
+
+                isRetryingForFrame = isRetrying;
+
                 if (flagContinue)
                 {
                     flagContinue = false;
@@ -182,10 +185,11 @@ void Start()
             }
             else
             {
+                isRetryingForFrame = isRetrying;
+
                 if (flagInterrupt)
                 {
                     setMainStore_forced(1, accumulators[controlRegister].toHex64());
-                    Debug.Log(accumulators[controlRegister].toUInt64());
                     accumulators[controlRegister].setUInt64(2);
                 }
                 else
@@ -209,9 +213,6 @@ void Start()
                         {
                             timeLeft += Time.deltaTime;
                         
-//                            for (int n = 0; (!isStopped99 && !isStoppedKB && !isStopped6910 && !isStoppedByError) 
-//                                && n < Time.deltaTime * 2000; n++)
-                                // 2 order per 1 milliseconds 
                             while ((!isStopped99 && !isStoppedKB && !isStopped6910 && !isStoppedByError)
                                     && timeLeft > 0.0f)
                             {
@@ -227,6 +228,20 @@ void Start()
             }
         }
 
+        updateDisplay();
+    }
+
+    private int lastDisplayed;
+
+    private void updateDisplay()
+    {
+        int a = lastDisplayed;
+
+        if (!isRetryingForFrame)
+        {
+            a = controlBoxScript.selectedAccumulator();
+            lastDisplayed = a;
+        }
 
         BCD10 displayed = new BCD10();
         displayed.digits[0] = accB;
@@ -271,11 +286,46 @@ void Start()
             indicatorPBScript.off();
     }
 
+    private void addCycles(uint i)
+    {
+        delayLinePos = (delayLinePos + i) % 50;
+        timeLeft -= i * cycleTime;
+    }
+
+    private void waitForDelayLine(UInt64 addr)
+    {
+        uint a = (uint) (addr % 50);
+        uint cycles = (uint)(((a * 3) % 50) + 50 - delayLinePos) % 50;
+        addCycles(cycles);
+    }
+
+    private UInt64 getMainStore(UInt64 addr)
+    {
+        uint i = (uint) (addr % mainStoreModulus);
+        waitForDelayLine(i);
+        return mainStore[i];
+    }
+
+    private void setMainStore_forced(UInt64 addr, UInt64 data)
+    {
+        uint i = (uint)(addr % mainStoreModulus);
+        waitForDelayLine(i);
+        mainStore[i] = data;
+    }
+
+    private void setMainStore(UInt64 addr, UInt64 data)
+    {
+        uint i = (uint)(addr % mainStoreModulus);
+        waitForDelayLine(i);
+        if (i >= 200 || (i < 100 && controlBoxScript.flagFree0) || (i >= 100 && i < 200 && controlBoxScript.flagFree100))
+            mainStore[i] = data;
+    }
+
     public void processOneOrder()
     {
         if (isPrimaryInput)
         {
-            if (!isRBusy)
+            if (!isWaitingR)
             {
                 currentOrder.setHex64(primaryInputMicroProgram[primaryInputPC]);
                 primaryInputPC = primaryInputPC + 1;
@@ -303,7 +353,7 @@ void Start()
             {
                 if (!isRetrying)
                 {
-                    currentOrder.setHex64(mainStore[accumulators[controlRegister].toUInt64() % mainStoreModulus]);
+                    currentOrder.setHex64(getMainStore(accumulators[controlRegister].toUInt64()));
                     if (kbWaitPressed &&
                         accumulators[controlRegister].toUInt64() % mainStoreModulus == kbValue.toUInt64() % mainStoreModulus)
                         isStoppedKB = true;
@@ -319,6 +369,7 @@ void Start()
         siriusOperand.setUInt32((UInt32) (currentOrder.toUInt64() / 10000L));
         effectiveOperand.setBCD6(siriusOperand);
 
+        addCycles(3);
         switch (siriusOpcodeHigh)
         {
             case 0:
@@ -352,28 +403,10 @@ void Start()
                 processOrder9();
                 break;
             default:
-                invalidOrder();
                 break;
         }
-    }
 
-    private void invalidOrder()
-    {
-        Debug.Log("Invalid order: " + siriusOpcodeHigh + "," + siriusOpcodeLow);
-        isStoppedByError = true;
-    }
-
-    private void setMainStore_forced(UInt64 addr, UInt64 data)
-    {
-        UInt64 i = addr % mainStoreModulus;
-        mainStore[i] = data;
-    }
-
-    private void setMainStore(UInt64 addr, UInt64 data)
-    {
-        UInt64 i = addr % mainStoreModulus;
-        if (i >= 200 || (i < 100 && controlBoxScript.flagFree0) || (i >= 100 && i < 200 && controlBoxScript.flagFree100))
-            mainStore[i] = data;
+        isRetryingForFrame &= isRetrying;
     }
 
     private void processOrder0()
@@ -415,8 +448,6 @@ void Start()
                 accumulators[accA].set(b); 
                 break;
         }
-
-        timeLeft -= 3 * cycleTime;
     }
 
     private void processOrder1()
@@ -426,7 +457,7 @@ void Start()
         {
             if (accB > 0)
                 effectiveOperand.add(accumulators[accB]);
-            b.setHex64(mainStore[effectiveOperand.toUInt64() % mainStoreModulus]);
+            b.setHex64(getMainStore(effectiveOperand.toUInt64()));
             if (accA == 0)
                 accumulators[0].set(controlBoxScript.getKeyboard());
         }
@@ -475,11 +506,6 @@ void Start()
                 accumulators[accA].set(b);
                 break;
         }
-
-        if (siriusOpcodeLow <= 4)
-            timeLeft -= 53 * cycleTime;
-        else
-            timeLeft -= 3 * cycleTime;
     }
 
     private void processOrder2()
@@ -531,7 +557,6 @@ void Start()
                 accumulators[accA].digits[0] = b.digits[9];
                 break;
         }
-        timeLeft -= 3 * cycleTime;
     }
 
     private void processOrder3()
@@ -547,7 +572,7 @@ void Start()
         {
             if (accB > 0)
                 effectiveOperand.add(accumulators[accB]);
-            b.setHex64(mainStore[effectiveOperand.toUInt64() % mainStoreModulus]);
+            b.setHex64(getMainStore(effectiveOperand.toUInt64()));
             if (accA == 0)
                 accumulators[0].set(controlBoxScript.getKeyboard());
             flagOVR |= shiftOVR | (wasNegative != accumulators[accA].isNegative());
@@ -566,7 +591,6 @@ void Start()
         for (int i = 9; i > 0; i--)
             accumulators[accA].digits[i] = accumulators[accA].digits[i - 1];
         accumulators[accA].digits[0] = 0;
-
 
         switch (siriusOpcodeLow)
         {
@@ -605,10 +629,6 @@ void Start()
                 accumulators[accA].digits[0] = msdB;
                 break;
         }
-        if (siriusOpcodeLow <= 4)
-            timeLeft -= 53 * cycleTime;
-        else
-            timeLeft -= 3 * cycleTime;
     }
 
     private void processOrder4()
@@ -665,9 +685,17 @@ void Start()
             case 9:
                 break;
         }
-        timeLeft -= 3 * cycleTime;
     }
 
+    private int delayLineDistance(UInt64 a0, UInt64 a1)
+    {
+        int b0 = (int)(a0 % 50), b1 = (int)(a1 % 50);
+
+        b0 = (b0 * 3) % 50;
+        b1 = (b1 * 3) % 50;
+
+        return (b1 + 50 - b0) % 50;
+    }
 
     private void setPC(BCD10 addr)
     {
@@ -678,7 +706,6 @@ void Start()
         else
         {
             accumulators[controlRegister].set(addr);
-            timeLeft -= 26 * cycleTime;
         }
     }
 
@@ -735,7 +762,6 @@ void Start()
                     setPC(effectiveOperand);
                 break;
         }
-        timeLeft -= 3 * cycleTime;
     }
 
     private void processOrder6()
@@ -787,11 +813,6 @@ void Start()
                     accumulators[accA].digits[i] = mask66_68[effectiveOperand.digits[i-4], accumulators[accA].digits[i]];
                 break;
         }
-
-        if (siriusOpcodeLow <= 4)
-            timeLeft -= 53 * cycleTime;
-        else
-            timeLeft -= 3 * cycleTime;
     }
 
     private byte tape5BitToBCD2(byte b)
@@ -874,7 +895,7 @@ void Start()
 
     }
 
-    private int multDivCycles;
+    private uint multDivCycles;
 
     private int[] mult_result;
     private void mult(BCD10 b, BCD10 c, bool negate)
@@ -884,7 +905,7 @@ void Start()
 
         multDivCycles = 22;
         for (int i = 0; i < 10; i++)
-            multDivCycles += b.digits[i] * 2;
+            multDivCycles += (uint) b.digits[i] * 2;
 
         for (int i = 0; i < 10; i++)
             for (int j = 0; j < 10; j++)
@@ -971,100 +992,89 @@ void Start()
         }
 
         for (int i = 0; i < 10; i++)
-            multDivCycles += div_quotient[i] * 2;
+            multDivCycles += (uint) div_quotient[i] * 2;
 
         return false;
     }
 
-    private void processOrder7()
+    private void readInputChannel()
     {
         TapeScript readScript;
+        byte b = 0xff;
+
+        if (effectiveOperand.toUInt64() % 5 == 0)
+        {
+            if ((effectiveOperand.toUInt64() % 10 == 0))
+                readScript = tapeReaderScriptA;
+            else
+                readScript = tapeReaderScriptB;
+            isRBusy = readScript.isRBusy();
+            if (!isRBusy)
+            {
+                b = readScript.read();
+            }
+        }
+        if ((effectiveOperand.toUInt64() % 10 == 1))
+        {
+            isRBusy = printerScript.isRBusy();
+            if (!isRBusy)
+            {
+                b = printerScript.read();
+            }
+        }
+        if (b == 0xff)
+        {
+            isRetrying = true;
+            isWaitingR = true;
+        }
+        else
+        {
+            isRetrying = false;
+            isWaitingR = false;
+            accumulators[accA].setHex64(((UInt64)tape5BitToBCD2(b)) << 32);
+        }
+    }
+
+    private void writeOutputChannel()
+    {
+        if (effectiveOperand.toUInt64() % 10 == 0)
+        {
+            isWaitingP = !tapePunchScript.punch(toTapeCode(accumulators[accA]));
+        }
+        if (effectiveOperand.toUInt64() % 10 == 1)
+        {
+            isWaitingP = !printerScript.print(toTapeCode(accumulators[accA]));
+        }
+        isRetrying = isWaitingP;
+    }
+
+    private void processOrder7()
+    {
         BCD10 bcd0, bcd1;
         bool negate;
 
         if (accB > 0)
             effectiveOperand.add(accumulators[accB]);
 
-        byte b;
         switch (siriusOpcodeLow)
         {
             case 1:
             case 6:
-                b = 0;
-                if (effectiveOperand.toUInt64() % 5 == 0)
-                {
-                    if ((effectiveOperand.toUInt64() % 10 == 0))
-                        readScript = tapeReaderScriptA;
-                    else
-                        readScript = tapeReaderScriptB;
-                    b = readScript.read();
-                }
-                else
-                {
-                    if ((effectiveOperand.toUInt64() % 10 == 1))
-                    {
-                        b = printerScript.read();
-                    }
-                }
-                if (b == 0xff)
-                {
-                    isRetrying = true;
-                    isRBusy = true;
-                }
-                else
-                {
-                    isRetrying = false;
-                    isRBusy = false;
-                    accumulators[accA].setHex64(((UInt64)tape5BitToBCD2(b)) << 32);// FIXME: if busy?
-                }
+                readInputChannel();
                 break;
             case 2:
             case 7:
-                if (effectiveOperand.toUInt64() % 10 == 0)
-                    isPBusy = !tapePunchScript.punch(toTapeCode(accumulators[accA])); 
-                else
-                    isPBusy = !printerScript.print(toTapeCode(accumulators[accA]));
-                isRetrying = isPBusy;
+                writeOutputChannel();
                 break;
             case 3:
             case 8: 
-                if (!isRetrying || isRBusy)
+                if (!isRetrying || isWaitingR)
                 {
-                    b = 0;
-                    if (effectiveOperand.toUInt64() % 5 == 0)
-                    {
-                        if ((effectiveOperand.toUInt64() % 10 == 0))
-                            readScript = tapeReaderScriptA;
-                        else
-                            readScript = tapeReaderScriptB;
-                        b = readScript.read();
-                    }
-                    else
-                    {
-                        if ((effectiveOperand.toUInt64() % 10 == 1))
-                        {
-                            b = printerScript.read();
-                        }
-                    }
-                    if (b == 0xff)
-                    {
-                        isRetrying = true;
-                        isRBusy = true;
-                    }
-                    else
-                    {
-                        isRetrying = false;
-                        isRBusy = false;
-                        accumulators[accA].setHex64(((UInt64)tape5BitToBCD2(b)) << 32);// FIXME: if busy?
-                    }
+                    readInputChannel();
                 }
-                if (!isRBusy)
+                if (!isWaitingR)
                 {
-                    if (effectiveOperand.toUInt64() % 10 == 0)
-                        isPBusy = !tapePunchScript.punch(toTapeCode(accumulators[accA]));
-                    else
-                        isPBusy = !printerScript.print(toTapeCode(accumulators[accA]));
-                    isRetrying = isPBusy;
+                    writeOutputChannel();
                 }
                 break;
             case 4: // accB=0: KB 
@@ -1139,17 +1149,13 @@ void Start()
         }
         if (siriusOpcodeLow == 0 || siriusOpcodeLow == 4 || siriusOpcodeLow == 5 || siriusOpcodeLow == 9)
         {
-            timeLeft -= (3 + ((multDivCycles + 46)/50) * 50) * cycleTime; 
+            addCycles(multDivCycles);
         }
-        else
-            timeLeft -= 3 * cycleTime;
-
     }
 
     private void processOrder8()
     {
         // dummy instructions
-        timeLeft -= 3 * cycleTime;
     }
 
     private void processOrder9()
@@ -1163,6 +1169,5 @@ void Start()
         {
             isStopped99 = true;
         }
-        timeLeft -= 3 * cycleTime;
     }
 }

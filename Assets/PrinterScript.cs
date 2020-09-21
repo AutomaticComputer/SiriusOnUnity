@@ -111,4 +111,10 @@ public class PrinterScript : MonoBehaviour
             return false;
         return printerDrumScript.type(b);
     }
+
+
+    public bool isRBusy()
+    {
+        return (typeCode == 0xff);
+    }
 }

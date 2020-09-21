@@ -94,7 +94,8 @@ public class PrinterDrumScript : MonoBehaviour
     {
         for (int i = 0; i < 6; i++)
         {
-            texture.SetPixel(40 + currentX * 6 + i, (charsPerRoll - currentPosition - 1) * pixelsPerChar,
+            texture.SetPixel(40 + currentX * 6 + i, 
+                (charsPerRoll - (currentPosition % charsPerRoll)- 1) * pixelsPerChar,
                 Color.white);
         }
     }
@@ -103,7 +104,8 @@ public class PrinterDrumScript : MonoBehaviour
     {
         for (int i = 0; i < 6; i++)
         {
-            texture.SetPixel(40 + currentX * 6 + i, (charsPerRoll - currentPosition - 1) * pixelsPerChar,
+            texture.SetPixel(40 + currentX * 6 + i, 
+                (charsPerRoll - (currentPosition % charsPerRoll) - 1) * pixelsPerChar,
                 Color.gray);
         }
     }
@@ -146,6 +148,11 @@ public class PrinterDrumScript : MonoBehaviour
                 currentPosition++;
                 isRotated = true;
                 setCursor();
+                for (int j = 0; j < 8 ; j++)
+                    for (int i = 0; i < 6 * 80; i++)
+                        texture.SetPixel(40 +  i,
+                            (charsPerRoll - (currentPosition % charsPerRoll) - 1) * pixelsPerChar - j,
+                            Color.white);
                 texture.Apply();
                 if (bufferCurrent < bufferMax)
                 {
@@ -168,7 +175,9 @@ public class PrinterDrumScript : MonoBehaviour
 
         if (currentX < 80)
         {
-            texture.SetPixels(40 + currentX * 6, (charsPerRoll - currentPosition - 1) * pixelsPerChar, 6, 8, fontTexture.GetPixels(c * 6, 0, 6, 8));
+            texture.SetPixels(40 + currentX * 6, 
+                (charsPerRoll - (currentPosition % charsPerRoll) - 1) * pixelsPerChar, 6, 8, 
+                fontTexture.GetPixels(c * 6, 0, 6, 8));
             currentX++;
             setCursor();
             if (bufferCurrent < bufferMax)
