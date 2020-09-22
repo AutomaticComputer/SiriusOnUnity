@@ -1026,6 +1026,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 05c8266e36c1e6648951cb5a5e0e9349, type: 3}
+--- !u!114 &157297393 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5716026875272028554, guid: c4e420c2b9d36ba4580829ae2c577d07,
+    type: 3}
+  m_PrefabInstance: {fileID: 592903944}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2ed8d749a243544aa26a6051cf7c1f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &164693725 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 9214125851343153310, guid: f3acde692fdb47546a1985242b02af1f,
@@ -1157,6 +1169,18 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 465915486}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &224605010 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5716026875272028554, guid: c4e420c2b9d36ba4580829ae2c577d07,
+    type: 3}
+  m_PrefabInstance: {fileID: 132125617}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2ed8d749a243544aa26a6051cf7c1f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &267824850
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6081,6 +6105,18 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1939992358}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1658738032 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5716026875272028554, guid: c4e420c2b9d36ba4580829ae2c577d07,
+    type: 3}
+  m_PrefabInstance: {fileID: 611142024}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2ed8d749a243544aa26a6051cf7c1f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &1677398008 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5071153655878387754, guid: 50101ac8e0fc63843aa499bf60b60ba4,
@@ -7607,6 +7643,9 @@ MonoBehaviour:
   indicator6910Script: {fileID: 1700839587}
   indicatorRBScript: {fileID: 1558528802}
   indicatorPBScript: {fileID: 1818732079}
+  indicatorMSDScript: {fileID: 157297393}
+  indicatorNZScript: {fileID: 224605010}
+  indicatorSBScript: {fileID: 1658738032}
   tapePunchScript: {fileID: 1127028765}
   tapeReaderScriptA: {fileID: 491089229}
   tapeReaderScriptB: {fileID: 1684785101}

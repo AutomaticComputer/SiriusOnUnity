@@ -24,7 +24,8 @@ Especially, the first link contains a gate-level simulator of Sirius, programmin
 
 ## This emulator
 
-I wanted to know what it is like to program a computer in the era of teleprinters and  paper tapes, so I made this emulator. 
+I wanted to know what it is like to program a computer in the era of teleprinters and  paper tapes, 
+so I made this emulator. 
 
 You can type into the teleprinter(teletype) to punch a paper tape, 
 feed it to the computer, get the results punched on a tape 
@@ -48,14 +49,20 @@ but this was convenient for my purpose.)
 
 - As I am just a hobby programmer, the code might be somewhat strange. 
 
-- The timing is only approximately correct: 
-Where memory access is involved, I employed the average cycles. 
-It shouldn't be too difficult to make it more precise. 
+- In this emulator, the unit of execution is an order(instruction), not a clock cycle. 
+Further, it executes a number of orders each frame. 
+Thus indicators "A-state" and "C-state" do not work (they are unused), 
+and playing music is not possible (sound is not implemented yet, anyway). 
+
+- The behavior of indicators seem to be a little different from the simulator. 
+(For example, in the manual mode, "WORD != 0" etc. works immediately after 
+pressing "Continue" in this emulator, but in the simulator it works after one more press.)
 
 - I have never used a Sirius (or anything other than a microcomputer), 
 so there will be many inaccuracies. 
 The layout of the keyboard on the teleprinter is almost certainly wrong. 
 
+- Speeding down not yet implemented. 
 
 
 ### Trying the emulator
@@ -96,8 +103,8 @@ The data is saved in "SiriusOnUniti_Data/Printouts/" as "yyyyMMddHHmmss.png".
 
 You can try other tapes with the extension "ptw": 
 
-- Mandelblot_pr_pi.ptw draws a Mandelblot set directly to the teleprinter. 
 - Mandelblot.ptw draws a Mandelblot set via the tape punch. 
+- Mandelblot_pr_pi.ptw draws a Mandelblot set directly to the teleprinter. 
 - Exponential_PI.ptw calculates 1000 digits of Napier's number. 
 It is coded in a rather straightforward way, and there must be much room for improvement. 
 
@@ -128,6 +135,31 @@ In case you type a program using the teleprinter in this emulator,
 it has minimal capability for correcting a tape: 
 You can load a tape, read a character and copy it to another tape or skip a character. 
 You can also connect tapes in a similar way. 
+
+
+### Some utility programs 
+
+Actually, there is only one at this moment. 
+
+"PILoader.ptr" allows one to write a a program to be used as Primary Input 
+using Initial Orders. 
+
+Write a program that starts with address 0. 
+(Note that location 2 is the location where interrupt handling starts, 
+and location 1 is where the return address for the interrupt is stored. 
+So the first order will be a jump to a convenient location. 
+When you don't use Interrupt, location 2 might be a good choice.)
+End the program with the warning character "L". 
+Other warning characters won't work. 
+The last location in the program must be the highest location in the program. 
+
+Load Initial Orders, load this program using Initial Orders, 
+set the program tape prepared as above and execute "PILoader" with "Continue". 
+This program rewrites part of Initial Order so that the program is loaded 
+at the locations from 300, 
+and punches the resulting code to the output tape. 
+(It rewrites back the original code if successful, but if unsuccessful the result is unknown.)
+
 
 ### Plans
 

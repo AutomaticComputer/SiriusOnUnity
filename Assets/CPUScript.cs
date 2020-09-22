@@ -9,7 +9,8 @@ public class CPUScript : MonoBehaviour
     public NixieArrayScript displayScript0, displayScript1;
     public ControlBoxScript controlBoxScript;
     public IndicatorScript indicatorPIScript, indicatorOVRScript, indicator99WScript, 
-        indicatorKSScript, indicator6910Script, indicatorRBScript, indicatorPBScript;
+        indicatorKSScript, indicator6910Script, indicatorRBScript, indicatorPBScript,
+        indicatorMSDScript, indicatorNZScript, indicatorSBScript;
 
     public TapeScript tapePunchScript, tapeReaderScriptA, tapeReaderScriptB;
     public PrinterScript printerScript;
@@ -235,6 +236,17 @@ void Start()
 
     private void updateDisplay()
     {
+        indicatorPIScript.setState(isPrimaryInput);
+        indicatorOVRScript.setState(flagOVR);
+        indicator99WScript.setState(isStopped99);
+        indicatorKSScript.setState(isStoppedKB);
+        indicator6910Script.setState(isStopped6910);
+        indicatorRBScript.setState(isRBusy);
+        indicatorPBScript.setState(isPBusy);
+        indicatorMSDScript.setState(accumulators[accA].digits[9] != 0);
+        indicatorNZScript.setState(!accumulators[accA].isZero());
+        indicatorSBScript.setState(accumulators[accA].isNegative());
+
         int a = lastDisplayed;
 
         if (!isRetryingForFrame)
@@ -256,34 +268,6 @@ void Start()
         accumulators[0].set(accumulators[a]);
         displayScript1.setNumber(accumulators[0]);
 
-        if (isPrimaryInput)
-            indicatorPIScript.on();
-        else
-            indicatorPIScript.off();
-        if (flagOVR)
-            indicatorOVRScript.on();
-        else
-            indicatorOVRScript.off();
-        if (isStopped99)
-            indicator99WScript.on();
-        else
-            indicator99WScript.off();
-        if (isStoppedKB)
-            indicatorKSScript.on();
-        else
-            indicatorKSScript.off();
-        if (isStopped6910)
-            indicator6910Script.on();
-        else
-            indicator6910Script.off();
-        if (isRBusy)
-            indicatorRBScript.on();
-        else
-            indicatorRBScript.off();
-        if (isPBusy)
-            indicatorPBScript.on();
-        else
-            indicatorPBScript.off();
     }
 
     private void addCycles(uint i)
