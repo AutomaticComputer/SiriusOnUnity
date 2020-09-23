@@ -62,12 +62,13 @@ pressing "Continue" in this emulator, but in the simulator it works after one mo
 so there will be many inaccuracies. 
 The layout of the keyboard on the teleprinter is almost certainly wrong. 
 
-- Speeding down not yet implemented. 
+- I am not sure if the behevior of "slowing down mode" is correct. 
+(Actually, this emulator has "overclock" mode, which the real one surely didn't.) 
 
 
 ### Trying the emulator
 
-After you start up the program, you can use arrow keys and PageUp/Down 
+After you start up the program, you can use arrow keys and PageUp/PageDown 
 to move the camera around. 
 
 I coded and punched a few small sample programs. 
@@ -80,41 +81,42 @@ Choose "HelloWorld.ptw", for example.
 2. Make sure that "Manual" and "WAIT" keys in the main console(Control Box) are pressed. 
 and push the "PRIMARY INPUT" button. 
 The number in the first row of figures is the current order(instruction) being obeyed. 
-If you push "1" in the leftmost column, 
-you can see in the second row the current "Control Register"(program counter), 
-which shows where the program is being stored. 
+The second row displays the content of the register selected by the leftmost column of keys. 
+The register 1 is the "Control Register"(program counter), 
+which in this case holds the location where the program is being stored. 
 
-3. When it stops, press "CLEAR CONTROL", "AUTO" and then "RUN". 
+3. When the loading stops, push "CLEAR CONTROL", press "AUTO" and then "RUN". 
 A number of holes are punched (printed, actually) on the tape in the right of the computer. 
 When Sirius stops with "99 Wait" indicator on, 
 push "SAVE" button on the tape punch. 
 It saves the data into "SiriusOnUnity_Data/Tapes/" 
 as "yyyyMMddHHmmss.ptp" (yyyyMMddHHmmss is the current date and time). 
 
-
-4. Push the "LOAD" button on the teleprinter, 
-and click on (or touch) the tape 
+4. Push the "LOAD" button on the teleprinter, click on the tape, 
 press the "PUNCH" button on the teleprinter to suppress punching, 
 and then press the "READ" button. 
 The contents of the tape are read and printed. 
-You can save the output with "CUT" button. 
+You can save the output as an image with "CUT" button. 
 The data is saved in "SiriusOnUniti_Data/Printouts/" as "yyyyMMddHHmmss.png". 
 
 
 You can try other tapes with the extension "ptw": 
 
 - Mandelblot.ptw draws a Mandelblot set via the tape punch. 
+If you are not patient enough, you can click on the left of the wheel in the bottom 
+to overclock the machine. 
 - Mandelblot_pr_pi.ptw draws a Mandelblot set directly to the teleprinter. 
 - Exponential_PI.ptw calculates 1000 digits of Napier's number. 
-It is coded in a rather straightforward way, and there must be much room for improvement. 
+It is coded in a straightforward way, and there must be much room for improvement. 
+The register 5 holds "n" which counts up to 500.  
 
-In fact, "ptw" files are in bare machine code format 
+In fact, "ptw" files are in the bare machine code format 
 (you can print it with the teleprinter), 
 and this is not how ordinary programs were written. 
-If a program is in machine code, 
-it was written in a more convenient form, which allows the use of labels, for example. 
+A program in machine code 
+was usually written in a more convenient form, which allows the use of labels, for example. 
 You can see an example by printing out "Mandelblot_mc.ptr". 
-It was loaded by "Initial Order" program. 
+It was loaded by the "Initial Order" program. 
 
 Otherwise, you could write a program in "Autocode": 
 See "Mandelblot_ac.ptr" for an example code. 
@@ -125,11 +127,12 @@ The instruction on the simulator should be mostly applicable to this emulator.
 
 If you code yourself, note the following: 
 - The tape readers are on input channels 0 and 5. 
-- Tape punch is on input channel 0. 
-- The teleprinter is on input channel 1 and output channel 1. 
-I don't know if it was common to connect a teleprinter directly. 
+- The tape punch is on input channel 0. 
+- The teleprinter is on input channel 1 and output channel 1, 
+although I don't think it was common to connect a teleprinter directly. 
 - In this emulator, Sirius has 10000 words of store(memory), but the Initial Order and Autocode 
-that comes with the simulator can use only 4000 words (if I understand it correctly). 
+that comes with the simulator are for 4000 words Sirius. 
+For small programs, it won't matter. 
 - You can use "teleprinter" program that comes with the simulator. 
 In case you type a program using the teleprinter in this emulator, 
 it has minimal capability for correcting a tape: 
@@ -168,14 +171,19 @@ Things I might do in future:
 - Clean up the code and assets. 
 For example, the internal BCD code currently used is a little different from the one in the real Sirius, 
 so I might fix this. 
-- Build up a "personal" computing environment: 
+- Build up a "personal" "mini-computer like" computing environment: 
 Something like TECO, games, tiny basic perhaps, etc. 
-Of course, this is somewhat anachronistic. 
+Of course, this is an anachronistic project. 
 - Another old computer --- ETL Mark IV or parametron computer PC-1 from Japan, perhaps. 
 
 
 ### Contact
 
+Write as an issue or send me an e-mail, 
+but since this is a holiday project, it may take a week or more before I respond. 
 
-Since this is a holiday project, it may take a week or more 
-before I respond. 
+
+### License
+
+I haven't decided on what license to choose, 
+but for the time being, use and modify it as you like. 

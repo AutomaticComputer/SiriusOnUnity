@@ -5,7 +5,7 @@ using UnityEngine;
 public class IndicatorScript : MonoBehaviour
 {
     [SerializeField]
-    private Material onMaterial, offMaterial;
+    private Material onMaterial, offMaterial, specialMaterial;
     private bool lastState;
     // Start is called before the first frame update
     void Start()
@@ -29,5 +29,10 @@ public class IndicatorScript : MonoBehaviour
             else
                 gameObject.GetComponent<Renderer>().material = offMaterial;
         }
+    }
+
+    public void setSpecial()
+    {
+        gameObject.GetComponent<Renderer>().material = specialMaterial;
     }
 }

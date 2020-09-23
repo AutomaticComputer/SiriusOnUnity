@@ -10,10 +10,13 @@ public class CPUScript : MonoBehaviour
     public ControlBoxScript controlBoxScript;
     public IndicatorScript indicatorPIScript, indicatorOVRScript, indicator99WScript, 
         indicatorKSScript, indicator6910Script, indicatorRBScript, indicatorPBScript,
-        indicatorMSDScript, indicatorNZScript, indicatorSBScript;
+        indicatorMSDScript, indicatorNZScript, indicatorSBScript, 
+        indicatorNFSScript;
 
     public TapeScript tapePunchScript, tapeReaderScriptA, tapeReaderScriptB;
     public PrinterScript printerScript;
+
+    public WheelScript speedWheelScript;
 
     private BCD10[] accumulators;
     const int controlRegister = 1;
@@ -25,7 +28,10 @@ public class CPUScript : MonoBehaviour
     private const int mainStoreSize = 10000, mainStoreModulus = 10000;
 
     private float timeLeft;
-    private const float cycleTime = 0.00008f;
+    private float cycleTime;
+    private float[] cycleTimes;
+    private uint cycleFactor;
+    private uint[] cycleFactors;
 
     private uint delayLinePos;
     
@@ -88,6 +94,21 @@ void Start()
             {0, 1, 2, 3, 0, 0, 1, 2, 3, 0 }
         };
 
+        cycleTimes = new float[]
+        {
+            0.00008f, 0.00008f, 0.00008f, 0.00008f, 0.00008f,
+            0.00008f,
+            0.00004f, 0.00002f, 0.00001f, 0.000005f, 0.0000025f
+        };
+        cycleFactors = new uint[]
+        {
+            4167, 2083, 1042, 100, 10,
+            1, 
+            1, 1, 1, 1, 1
+        };
+
+        cycleTime = cycleTimes[5];
+        cycleFactor = cycleFactors[5];
         isPrimaryInput = false; 
         isStopped99 = false;
         isStoppedByError = false;
@@ -119,6 +140,9 @@ void Start()
         bool flagInterrupt = false;
 
         kbValue = controlBoxScript.getKeyboard();
+
+        cycleTime = cycleTimes[speedWheelScript.getValue()];
+        cycleFactor = cycleFactors[speedWheelScript.getValue()];
 
         if (isPrimaryInput)
         {
@@ -246,6 +270,13 @@ void Start()
         indicatorMSDScript.setState(accumulators[accA].digits[9] != 0);
         indicatorNZScript.setState(!accumulators[accA].isZero());
         indicatorSBScript.setState(accumulators[accA].isNegative());
+        {
+            int s = speedWheelScript.getValue();
+            if (s > 5)
+                indicatorNFSScript.setSpecial();
+            else
+                indicatorNFSScript.setState(s < 5);
+        }
 
         int a = lastDisplayed;
 
@@ -353,7 +384,7 @@ void Start()
         siriusOperand.setUInt32((UInt32) (currentOrder.toUInt64() / 10000L));
         effectiveOperand.setBCD6(siriusOperand);
 
-        addCycles(3);
+        addCycles(3 * cycleFactor);
         switch (siriusOpcodeHigh)
         {
             case 0:
@@ -1133,7 +1164,7 @@ void Start()
         }
         if (siriusOpcodeLow == 0 || siriusOpcodeLow == 4 || siriusOpcodeLow == 5 || siriusOpcodeLow == 9)
         {
-            addCycles(multDivCycles);
+            addCycles(multDivCycles * cycleFactor);
         }
     }
 
