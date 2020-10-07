@@ -13,14 +13,13 @@ public class PrinterScript : MonoBehaviour
     [SerializeField]
     private TapeScript tapeReadScript, tapePunchScript;
     [SerializeField]
-    private OnOffButtonScript buttonReadScript, buttonEchoScript, buttonPunchScript;
+    private OnOffButtonScript buttonReadScript, buttonEchoScript, buttonFastScript, buttonPunchScript;
     [SerializeField]
     private PushButtonScript pbReadScript, pbRew, pbCutScript;
 
     private byte keyCode, typeCode, punchCode;
 
     private float timeElapsed;
-    private const float secondsPerChar = 0.05f;
 
     // Start is called before the first frame update
     void Start()
@@ -29,6 +28,7 @@ public class PrinterScript : MonoBehaviour
         typeCode = 0xff;
         punchCode = 0xff;
         buttonReadScript.setOn(false);
+        buttonFastScript.setOn(false);
     }
 
     // Update is called once per frame
@@ -39,6 +39,8 @@ public class PrinterScript : MonoBehaviour
             printerDrumScript.printToFile();
             return;
         }
+
+        printerDrumScript.setFast(buttonFastScript.isOn());
 
         byte b;
         b = teleprinterKeyboardScript.getCode();

@@ -138,6 +138,7 @@ void Start()
     void Update()
     {
         bool flagInterrupt = false;
+        // flagContinue is not reset, as it might be from the end of Primary Input.
 
         kbValue = controlBoxScript.getKeyboard();
 
@@ -156,17 +157,17 @@ void Start()
         }
         else
         {
+            if (controlBoxScript.flagContinueKey)
+            {
+                flagContinue = true;
+                controlBoxScript.flagContinueKey = false;
+            }
+
             if (!isRetryingForFrame)
             {
                 runPressed = controlBoxScript.flagRun;
                 manualPressed = controlBoxScript.flagManual;
                 kbWaitPressed = controlBoxScript.flagKBWait;
-
-                if (controlBoxScript.flagContinueKey)
-                {
-                    flagContinue = true;
-                    controlBoxScript.flagContinueKey = false;
-                }
 
                 if (controlBoxScript.flagInterruptKey)
                 {

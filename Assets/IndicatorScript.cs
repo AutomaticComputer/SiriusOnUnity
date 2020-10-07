@@ -6,11 +6,12 @@ public class IndicatorScript : MonoBehaviour
 {
     [SerializeField]
     private Material onMaterial, offMaterial, specialMaterial;
-    private bool lastState;
+    private bool lastState, wasSpecial;
     // Start is called before the first frame update
     void Start()
     {
         lastState = false;
+        wasSpecial = false;
     }
 
     // Update is called once per frame
@@ -21,8 +22,9 @@ public class IndicatorScript : MonoBehaviour
 
     public void setState(bool b)
     {
-        if (b != lastState)
+        if (b != lastState || wasSpecial)
         {
+            wasSpecial = false;
             lastState = b;
             if (b)
                 gameObject.GetComponent<Renderer>().material = onMaterial;
@@ -33,6 +35,7 @@ public class IndicatorScript : MonoBehaviour
 
     public void setSpecial()
     {
+        wasSpecial = true;
         gameObject.GetComponent<Renderer>().material = specialMaterial;
     }
 }

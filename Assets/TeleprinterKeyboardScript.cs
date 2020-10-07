@@ -62,7 +62,7 @@ public class TeleprinterKeyboardScript : MonoBehaviour
         -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 10, 26, 9, 3, 20,
         30, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 28, 18, 30,
         13, -1, 24, -1, 12, -1, 29, -1, 15, 23, 11, 17, 13,
-        0, 14, 27
+        -1, 14, 27
         };
         keyLS = new int[]
         {
@@ -70,7 +70,7 @@ public class TeleprinterKeyboardScript : MonoBehaviour
         17, 23, 5, 18, 20, 25, 21, 9, 15, 16, -1, -1, -1, -1, -1,
         -1, 1, 19, 4, 6, 7, 8, 10, 11, 12, 29, 28, -1, -1,
         -1, 26, 24, 3, 22, 2, 14, 13, -1, -1, -1, -1, -1,
-        0, -1, 27
+        0, -1, -1
         };
         keyCharFS = new char[]
         {
@@ -116,6 +116,7 @@ public class TeleprinterKeyboardScript : MonoBehaviour
             texture.SetPixels(3, 4, 6, 8,
                 teleprinterFont.GetPixels(keyFont[i] * 6, 0, 6, 8));
             keyboard[i].GetComponent<Renderer>().material.mainTexture = texture;
+            keyboard[i].GetComponent<KeyColorScript>().setColors(Color.white, Color.gray);
             texture.Apply();
         }
 
@@ -172,14 +173,8 @@ public class TeleprinterKeyboardScript : MonoBehaviour
     {
         for(int i=0; i<keyboard.Length; i++)
         {
-            if ((!isLetterShift && keyFS[i] >= 0) || (isLetterShift && keyLS[i] >= 0))
-            {
-                    keyboard[i].GetComponent<Renderer>().material.color = Color.white;
-            }
-            else
-            {
-                keyboard[i].GetComponent<Renderer>().material.color = Color.gray;
-            }
+            bool b = ((!isLetterShift && keyFS[i] >= 0) || (isLetterShift && keyLS[i] >= 0));
+            keyboard[i].GetComponent<KeyColorScript>().setDark(!b);
         }
     }
 

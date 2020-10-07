@@ -20,8 +20,8 @@ public class PrinterDrumScript : MonoBehaviour
 
     private const int figureShiftTape = 0, lfTape = 13, crTape = 30, letterShiftTape = 27;
 
-    private const float typeTime = 0.08333f;
-    private float timeLeft;
+    private const float typeTimeSlow = 0.08333f, typeTimeFast = 0.008333f;
+    private float typeTime, timeLeft;
 
     private byte[] buffer;
     private int bufferLines, bufferCurrent;
@@ -78,6 +78,7 @@ public class PrinterDrumScript : MonoBehaviour
         clear();
 
         timeLeft = 0.0f;
+        setFast(true);
     }
 
     // Update is called once per frame
@@ -234,5 +235,13 @@ public class PrinterDrumScript : MonoBehaviour
                     System.DateTime.Now.ToString("yyyyMMddHHmmss") + ".png", bytes);
 
         clear();
+    }
+
+    public void setFast(bool b)
+    {
+        if (b)
+            typeTime = typeTimeFast;
+        else
+            typeTime = typeTimeSlow;
     }
 }

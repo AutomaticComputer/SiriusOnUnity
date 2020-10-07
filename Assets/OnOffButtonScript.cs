@@ -4,15 +4,15 @@ using UnityEngine;
 
 public class OnOffButtonScript : MonoBehaviour
 {
-    private bool _isOn;
+    private bool _isOn = true;
     private Color offColor, onColor;
     // Start is called before the first frame update
     void Start()
     {
-        _isOn = true;
         offColor = new Color(0.4f, 0.4f, 0.0f);
         onColor = new Color(0.7f, 1.0f, 0.0f);
-        gameObject.GetComponent<Renderer>().material.color = onColor;
+        //        gameObject.GetComponent<Renderer>().material.color = onColor;
+        setOn(_isOn);
     }
 
     // Update is called once per frame

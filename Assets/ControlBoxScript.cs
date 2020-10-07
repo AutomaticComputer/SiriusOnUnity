@@ -32,6 +32,13 @@ public class ControlBoxScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Color lightGray, darkGray, darkRed, darkGreen, darkYellow;
+        lightGray = new Color(0.7f, 0.7f, 0.7f);
+        darkGray = new Color(0.35f, 0.35f, 0.35f);
+        darkRed = new Color(0.7f, 0.0f, 0.0f);
+        darkGreen = new Color(0.0f, 0.7f, 0.0f);
+        darkYellow = new Color(0.7f, 0.7f, 0.0f);
+
         Texture2D[] textures = new Texture2D[11];
         for(int i=0; i < 11; i++)
         {
@@ -67,9 +74,13 @@ public class ControlBoxScript : MonoBehaviour
                     new Vector3(KeyboardStartX + i * KeyW, KeyY, KeyboardStartZ + j * KeyH),
                     keyPrefab.transform.rotation* transform.rotation);
                 if (i < 3 || i == 6 || i == 7 || i == 9)
-                    keyboard[i, j].GetComponent<Renderer>().material.color = Color.white;
+                {
+                    keyboard[i, j].GetComponent<KeyColorScript>().setColors(Color.white, lightGray);
+                }
                 else
-                    keyboard[i, j].GetComponent<Renderer>().material.color = Color.gray;
+                {
+                    keyboard[i, j].GetComponent<KeyColorScript>().setColors(Color.gray, darkGray);
+                }
                 keyboard[i, j].GetComponent<Renderer>().material.mainTexture = textures[j]; 
             }
             pressed[i] = -1;
@@ -82,12 +93,12 @@ public class ControlBoxScript : MonoBehaviour
                 keyPrefab.transform.rotation * transform.rotation);
             if (a == 0)
             {
-                accumulatorKeys[a].GetComponent<Renderer>().material.color = Color.white;
+                accumulatorKeys[a].GetComponent<KeyColorScript>().setColors(Color.white, lightGray);
                 accumulatorKeys[a].GetComponent<Renderer>().material.mainTexture = textures[10];
             }
             else
             {
-                accumulatorKeys[a].GetComponent<Renderer>().material.color = Color.gray;
+                accumulatorKeys[a].GetComponent<KeyColorScript>().setColors(Color.gray, darkGray);
                 accumulatorKeys[a].GetComponent<Renderer>().material.mainTexture = textures[a];
             }
         }
@@ -99,92 +110,100 @@ public class ControlBoxScript : MonoBehaviour
             new Vector3(WideKeyX, KeyY, KeyboardStartZ + 9 * KeyH),
             wideKeyPrefab.transform.rotation * transform.rotation);
         primaryInputKey.GetComponent<Renderer>().material.mainTexture = tex3[0];
+        primaryInputKey.GetComponent<KeyColorScript>().setColors(Color.white, lightGray);
 
         isol0Key = Instantiate(keyPrefab,
             transform.position + transform.rotation *
             new Vector3(RadioKeyX, KeyY, KeyboardStartZ + 8 * KeyH),
             keyPrefab.transform.rotation * transform.rotation);
         isol0Key.GetComponent<Renderer>().material.mainTexture = tex2[0];
-        isol0Key.GetComponent<Renderer>().material.color = Color.gray;
+        isol0Key.GetComponent<KeyColorScript>().setColors(Color.gray, darkGray);
         free0Key = Instantiate(keyPrefab,
             transform.position + transform.rotation *
             new Vector3(RadioKeyX + KeyW, KeyY, KeyboardStartZ + 8 * KeyH),
             keyPrefab.transform.rotation * transform.rotation);
         free0Key.GetComponent<Renderer>().material.mainTexture = tex2[1];
+        free0Key.GetComponent<KeyColorScript>().setColors(Color.white, lightGray);
         isol100Key = Instantiate(keyPrefab,
             transform.position + transform.rotation *
             new Vector3(RadioKeyX, KeyY, KeyboardStartZ + 7 * KeyH),
             keyPrefab.transform.rotation * transform.rotation);
         isol100Key.GetComponent<Renderer>().material.mainTexture = tex2[2];
-        isol100Key.GetComponent<Renderer>().material.color = Color.gray;
+        isol100Key.GetComponent<KeyColorScript>().setColors(Color.gray, darkGray);
         free100Key = Instantiate(keyPrefab,
             transform.position + transform.rotation *
             new Vector3(RadioKeyX + KeyW, KeyY, KeyboardStartZ + 7 * KeyH),
             keyPrefab.transform.rotation * transform.rotation);
         free100Key.GetComponent<Renderer>().material.mainTexture = tex2[3];
+        free100Key.GetComponent<KeyColorScript>().setColors(Color.white, lightGray);
 
         interruptKey = Instantiate(wideKeyPrefab,
             transform.position + transform.rotation *
             new Vector3(WideKeyX, KeyY, KeyboardStartZ + 6 * KeyH),
             wideKeyPrefab.transform.rotation * transform.rotation);
         interruptKey.GetComponent<Renderer>().material.mainTexture = tex3[1];
+        interruptKey.GetComponent<KeyColorScript>().setColors(Color.white, lightGray);
 
         acceptInputKey = Instantiate(wideKeyPrefab,
             transform.position + transform.rotation *
             new Vector3(WideKeyX, KeyY, KeyboardStartZ + 5 * KeyH),
             wideKeyPrefab.transform.rotation * transform.rotation);
         acceptInputKey.GetComponent<Renderer>().material.mainTexture = tex3[2];
+        acceptInputKey.GetComponent<KeyColorScript>().setColors(Color.white, lightGray);
 
         noKBWaitKey = Instantiate(keyPrefab,
             transform.position + transform.rotation *
             new Vector3(RadioKeyX, KeyY, KeyboardStartZ + 4 * KeyH),
             keyPrefab.transform.rotation * transform.rotation);
         noKBWaitKey.GetComponent<Renderer>().material.mainTexture = tex2[4];
-        noKBWaitKey.GetComponent<Renderer>().material.color = Color.gray;
+        noKBWaitKey.GetComponent<KeyColorScript>().setColors(Color.gray, darkGray);
         kbWaitKey = Instantiate(keyPrefab,
             transform.position + transform.rotation *
             new Vector3(RadioKeyX + KeyW, KeyY, KeyboardStartZ + 4 * KeyH),
             keyPrefab.transform.rotation * transform.rotation);
         kbWaitKey.GetComponent<Renderer>().material.mainTexture = tex2[5];
+        kbWaitKey.GetComponent<KeyColorScript>().setColors(Color.white, lightGray);
 
         autoKey = Instantiate(keyPrefab,
             transform.position + transform.rotation *
             new Vector3(RadioKeyX, KeyY, KeyboardStartZ + 3 * KeyH),
             keyPrefab.transform.rotation * transform.rotation);
         autoKey.GetComponent<Renderer>().material.mainTexture = tex2[6];
-        autoKey.GetComponent<Renderer>().material.color = Color.gray;
+        autoKey.GetComponent<KeyColorScript>().setColors(Color.gray, darkGray);
         manKey = Instantiate(keyPrefab,
             transform.position + transform.rotation *
             new Vector3(RadioKeyX + KeyW, KeyY, KeyboardStartZ + 3 * KeyH),
             keyPrefab.transform.rotation * transform.rotation);
         manKey.GetComponent<Renderer>().material.mainTexture = tex2[7];
+        manKey.GetComponent<KeyColorScript>().setColors(Color.white, Color.gray);
 
         clearControlKey = Instantiate(wideKeyPrefab,
             transform.position + transform.rotation *
             new Vector3(WideKeyX, KeyY, KeyboardStartZ + 2 * KeyH),
             wideKeyPrefab.transform.rotation * transform.rotation);
         clearControlKey.GetComponent<Renderer>().material.mainTexture = tex3[3];
+        clearControlKey.GetComponent<KeyColorScript>().setColors(Color.white, lightGray);
 
         waitKey = Instantiate(keyPrefab,
             transform.position + transform.rotation *
             new Vector3(RadioKeyX, KeyY, KeyboardStartZ + 1 * KeyH),
             keyPrefab.transform.rotation * transform.rotation);
         waitKey.GetComponent<Renderer>().material.mainTexture = tex2[8];
-        waitKey.GetComponent<Renderer>().material.color = Color.red;
+        waitKey.GetComponent<KeyColorScript>().setColors(Color.red, darkRed);
         runKey = Instantiate(keyPrefab,
             transform.position + transform.rotation *
             new Vector3(RadioKeyX + KeyW, KeyY, KeyboardStartZ + 1 * KeyH),
             keyPrefab.transform.rotation * transform.rotation);
         runKey.GetComponent<Renderer>().material.mainTexture = tex2[9];
-        runKey.GetComponent<Renderer>().material.color = Color.green;
-
+        runKey.GetComponent<KeyColorScript>().setColors(Color.green, darkGreen);
+        
         continueKey = Instantiate(wideKeyPrefab,
             transform.position + transform.rotation *
             new Vector3(WideKeyX, KeyY, KeyboardStartZ + 0 * KeyH),
             wideKeyPrefab.transform.rotation * transform.rotation);
         continueKey.GetComponent<Renderer>().material.mainTexture = tex3[4];
-        continueKey.GetComponent<Renderer>().material.color = Color.yellow;
-
+        continueKey.GetComponent<KeyColorScript>().setColors(Color.yellow, darkYellow);
+        
         flagFree0 = true;
         flagFree100 = true;
         flagKBWait = false;
@@ -231,12 +250,12 @@ public class ControlBoxScript : MonoBehaviour
     private void pressKey(GameObject key)
     {
         key.transform.Translate(transform.rotation * new Vector3(0.0f, KeyDownY, 0.0f));
-//        key.GetComponent<Renderer>().material.color = Color.grey;
+        key.GetComponent<KeyColorScript>().setDark(true);
     }
     private void releaseKey(GameObject key)
     {
         key.transform.Translate(transform.rotation * new Vector3(0.0f, -KeyDownY, 0.0f));
-//        key.GetComponent<Renderer>().material.color = Color.white;
+        key.GetComponent<KeyColorScript>().setDark(false);
     }
     private void OnMouseDown()
     {
