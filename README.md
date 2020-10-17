@@ -3,15 +3,23 @@
 This is an emulator for Ferranti Sirius computer on Unity. 
 
 Sirius is a small transistor computer from UK company Ferranti, announced in 1959. 
-Its programs and outputs were punched on paper tapes, just like the earliest "automatic computers." 
+Its programs and outputs were punched on paper tapes, just like the earliest "automatic computers" 
+such as [EDSAC(YouTube)](https://www.youtube.com/watch?v=6v4Juzn10gM&feature=youtu.be).
+
 It was a decimal machine, not uncommon those days. 
-It was not a fast computer, but its cost was low, and it also came with a (slightly) high-level language called Autocode. 
+It was not a fast computer, but it cost less than other computers of the time, 
+and it also came with a (somewhat) high-level language called Autocode. 
+Compared with the earliest computers such as EDSAC and Manchester Mark I, 
+its instruction set looks quite modern, 
+with 9 registers (1 control register = program counter, 
+and 8 general purpose registers) each useable as an index register, 
+a subroutine call instruction with any of 8 registers as a link register, etc. 
 
 Other (relatively) small computers of that era include Elliott 803(UK), IBM 1620, IBM 1401, PDP-1 (US), 
 NEAC 2203 (Japan), etc. 
 
 About 20 were built, not a great number compared with some of other computers as above, 
-but it is an intriguing machine, easy to use at least for simple tasks, I think. 
+but it is an interesting machine, seemingly easy to use at least for simple tasks, I think. 
 
 For more on Sirius (and Autocode), see: 
 
@@ -62,10 +70,16 @@ pressing "Continue" in this emulator, but in the simulator it works after one mo
 so there will be many inaccuracies. 
 The layout of the keyboard on the teleprinter is almost certainly wrong. 
 
-- I am not sure if the behevior of "slowing down mode" is correct. 
+- I am not sure if the behavior of "slowing down mode" is correct. 
 (Actually, this emulator has "overclock" mode, which the real one of course didn't.) 
 
 - You can speed up the printing with the "10x" button. 
+
+### Installation
+
+Just unpack the [binary](SiriusOnUnity_binary.zip) 
+or build it yourself. 
+
 
 
 ### Trying the emulator
@@ -94,7 +108,8 @@ A number of holes are punched (printed, actually) on the tape in the right of th
 When Sirius stops with "99 Wait" indicator on, 
 push "SAVE" button on the tape punch. 
 It saves the data into "SiriusOnUnity_Data/Tapes/" 
-as "yyyyMMddHHmmss.ptp" (yyyyMMddHHmmss is the current date and time). 
+as "yyyyMMddHHmmss.ptp" (yyyyMMddHHmmss is the current date and time, 
+and if it exists, an extra number is appended). 
 
 4. Push the "LOAD" button on the teleprinter, click on the tape, 
 press the "PUNCH" button on the teleprinter to suppress punching, 
@@ -105,6 +120,7 @@ The data is saved in "SiriusOnUniti_Data/Printouts/" as "yyyyMMddHHmmss.png".
 (If you built the binary from the source, you need to 
 create the "Printouts" directory.)
 
+5. To quit, just close the window. 
 
 You can try other tapes with the extension "ptw": 
 
@@ -130,11 +146,16 @@ Now, "ptw" files are in the bare machine code format
 and this is not how ordinary programs were written. 
 A program in machine code 
 was usually written in a more convenient form, which allows the use of "parameters", for example. 
-You can see an example by printing out "Mandelblot_mc.ptr". 
+You can see an example by printing out "Exponential.ptr", "Lunar_mc.ptr", or "Mandelblot_mc.ptr". 
 Such files were loaded by the "Initial Order" program. 
 
-Otherwise, you could write a program in "Autocode": 
-See "Mandelblot_ac.ptr" for an example code. 
+Or, you could write a program in "Autocode". 
+As examples, 
+- "Mandelblot_ac.ptr" draws (punches) a Mandelblot set. This takes about 2 hours. 
+You can save and print the result during the calculation. 
+- "Lunar_ac.ptr" is a port of Jim Storer's original Lunar Lander code in FOCAL on PDP-8. 
+It gives almost the same result as the original one, 
+and took much less time to code. 
 
 "Initial Order" and "Autocode", along with other programs and document, 
 are distributed along with the simulator from the Computer Conservation Society. 
@@ -160,7 +181,7 @@ You can also connect tapes in a similar way.
 
 Actually, there is only one at this moment. 
 
-"PILoader.ptr" allows one to write a program for Primary Input 
+"PITranslate.ptr" allows one to write a program for Primary Input 
 using Initial Orders. 
 
 Write a program that starts with address 0. 
@@ -174,7 +195,7 @@ The last location in the program must be the highest location in the program.
 The program can have up to 100 parameters. 
 
 Load Initial Orders, load this program using Initial Orders, 
-set the program tape prepared as above and run "PILoader" with "Continue". 
+set the program tape prepared as above and run "PITranslate" with "Continue". 
 This program rewrites part of Initial Orders so that the program is loaded 
 at the locations from 400, 
 and punches the resulting code to the output tape. 
@@ -193,6 +214,10 @@ Something like TECO, another game, tiny basic perhaps, etc.
 Of course, this is an anachronistic project. 
 - Another old computer --- ETL Mark IV or parametron computer PC-1 from Japan, perhaps. 
 
+### Acknowledgement
+
+The documents and the simulator from the Computer Conservation Society was essential 
+in developing this emulator. 
 
 ### Contact
 

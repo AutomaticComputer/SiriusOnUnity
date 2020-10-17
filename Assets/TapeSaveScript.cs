@@ -20,9 +20,20 @@ public class TapeSaveScript : MonoBehaviour
 
     private void OnMouseDown()
     {
-        System.IO.StreamWriter file =
-                    new System.IO.StreamWriter(Application.dataPath + @"/Tapes/" +
-                    System.DateTime.Now.ToString("yyyyMMddHHmmss") + ".ptp");
+        string fileNameBase, fileName;
+
+        fileNameBase = Application.dataPath + @"/Tapes/" + System.DateTime.Now.ToString("yyyyMMddHHmmss");
+
+        for(int i=0; ; i++) {
+            if (i == 0)
+                fileName = fileNameBase + ".ptp";
+            else
+                fileName = fileNameBase + i + ".ptp";
+            if (!System.IO.File.Exists(fileName))
+                break;
+        }
+
+        System.IO.StreamWriter file = new System.IO.StreamWriter(fileName);
         byte[] d = tapeScript.getData();
 
         for(int i = 0; i < d.Length; i++)

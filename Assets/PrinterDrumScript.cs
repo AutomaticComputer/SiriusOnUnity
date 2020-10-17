@@ -231,8 +231,20 @@ public class PrinterDrumScript : MonoBehaviour
 
         Object.Destroy(tex);
 
-        File.WriteAllBytes(Application.dataPath +@"/Printouts/" +
-                    System.DateTime.Now.ToString("yyyyMMddHHmmss") + ".png", bytes);
+        string fileNameBase, fileName;
+
+        fileNameBase = Application.dataPath + @"/Printouts/" + System.DateTime.Now.ToString("yyyyMMddHHmmss");
+
+        for(int i=0; ; i++) {
+            if (i == 0)
+                fileName = fileNameBase + ".png";
+            else
+                fileName = fileNameBase + i + ".png";
+            if (!System.IO.File.Exists(fileName))
+                break;
+        }
+
+        File.WriteAllBytes(fileName, bytes);
 
         clear();
     }
