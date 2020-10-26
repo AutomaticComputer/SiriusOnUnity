@@ -65,7 +65,7 @@ public class TapeScript : MonoBehaviour
             isDrawn = false;
         }
         gameObject.transform.localEulerAngles = savedEulerAngles + 
-            new Vector3(0, 0, (currentPosition % charsPerRoll) * (- 360.0f / charsPerRoll));
+            new Vector3((currentPosition % charsPerRoll) * (360.0f / charsPerRoll), 0, 0);
 
         if (readTimeLeft < readTime)
             readTimeLeft += Time.deltaTime;

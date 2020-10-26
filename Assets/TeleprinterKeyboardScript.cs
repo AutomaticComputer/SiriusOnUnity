@@ -13,7 +13,7 @@ public class TeleprinterKeyboardScript : MonoBehaviour
     private GameObject[] keyboard;
 
     const float KeyW = 0.015f, KeyH = 0.015f, KeyY = 0.0125f,
-        KeyDownY = 0.0075f, CollideZ = 0.02f,
+        KeyDownY = 0.0075f, CollideZ = 0.015f,
         KeyboardStartX = -0.12f, KeyboardStartZ = 0.04f;
 
     private char[] keyCharFS, keyCharLS;
@@ -74,9 +74,9 @@ public class TeleprinterKeyboardScript : MonoBehaviour
         };
         keyCharFS = new char[]
         {
-            '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '(', ')', '\0', '\b', '\\', 
-            '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '=', '+', '~', '*', '}',
-            '\r', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '.', '_', '\r',
+            '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '(', ')', '\0', '\b', '|', 
+            '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '=', '+', '#', '*', '^',
+            '\r', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '.', '}', '\r',
             '\t', '\0', 'x', '\0', 'v', '\0', 'n', '\0', ',', '/', '-', '>', '\t',
             '\0', ' ', '\0'
         }; 
@@ -188,12 +188,15 @@ public class TeleprinterKeyboardScript : MonoBehaviour
     {
         int i, j;
         int k;
-        Vector3 screenPoint = Camera.main.WorldToScreenPoint(transform.position);
-        Vector3 p = Quaternion.Inverse(transform.rotation) * (Camera.main.ScreenToWorldPoint(
-            new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenPoint.z - CollideZ)) - transform.position);
+        Vector3 dir = Quaternion.Inverse(transform.rotation) * 
+                Camera.main.ScreenPointToRay(Input.mousePosition).direction;
+        Vector3 q = Quaternion.Inverse(transform.rotation) * 
+                (Camera.main.transform.position - transform.position);
+        float px = q.x + dir.x * (CollideZ - q.y) / dir.y; 
+        float pz = q.z + dir.z * (CollideZ - q.y) / dir.y;
 
-        j = (int)Math.Round((KeyboardStartZ - p.z) / KeyH);
-        i = (int)Math.Round((p.x - KeyboardStartX - KeyW * 0.5 * j) / KeyW);
+        j = (int)Math.Round((KeyboardStartZ - pz) / KeyH);
+        i = (int)Math.Round((px - KeyboardStartX - KeyW * 0.5 * j) / KeyW);
         for (k=0; k < keyboard.Length; k++)
         {
             if (keyX[k] == i && keyZ[k] == j)

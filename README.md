@@ -36,8 +36,13 @@ I wanted to know what it is like to program a computer with a teleprinter and  p
 so I made this emulator. 
 
 You can type into the teleprinter(teletype) to punch a paper tape, 
-feed it to the computer, get the results punched on a tape 
+feed it to the computer, get the result punched on a tape 
 and then print it with the teleprinter. 
+
+The emulator is based on information from "LD11 Sirius Programming Manual." 
+When I couldn't decide on certain details (e.g. the behavior of the OVR flag) from the manual, 
+I checked them on the simulator. 
+
 
 ### Restrictions/Differences: 
 
@@ -45,7 +50,7 @@ and then print it with the teleprinter.
 but I don't think it works 100% correctly. 
 Where it differs from the simulator, I believe the simulator is right. 
 
-- Visually, it is not so realistic: [Screenshot](screenshot.png)
+- Visually, it is not so realistic: [Screenshot](screenshot.png). 
 For example, the whole system floats in the air, 
 tapes and printed paper are cylindrical, 
 keyboards are placed vertically, and so on. 
@@ -87,7 +92,7 @@ or build it yourself.
 After you start up the program, you can use arrow keys and PageUp/PageDown 
 to move the camera around. 
 
-I coded and punched a few small sample programs. 
+I coded and punched a few sample programs. 
 To try them, follow these steps: 
 
 1. Push the "LOAD" button on the leftmost tape reader. 
@@ -109,7 +114,7 @@ When Sirius stops with "99 Wait" indicator on,
 push "SAVE" button on the tape punch. 
 It saves the data into "SiriusOnUnity_Data/Tapes/" 
 as "yyyyMMddHHmmss.ptp" (yyyyMMddHHmmss is the current date and time, 
-and if it exists, an extra number is appended). 
+and if a file with this name exists, an extra number is appended). 
 
 4. Push the "LOAD" button on the teleprinter, click on the tape, 
 press the "PUNCH" button on the teleprinter to suppress punching, 
@@ -155,7 +160,7 @@ As examples,
 You can save and print the result during the calculation. 
 - "Lunar_ac.ptr" is a port of Jim Storer's original Lunar Lander code in FOCAL on PDP-8. 
 It gives almost the same result as the original one, 
-and took much less time to code. 
+and took much less time to code than "Lunar_pi.ptw" or "Lunar_mc.ptr". 
 
 "Initial Order" and "Autocode", along with other programs and document, 
 are distributed along with the simulator from the Computer Conservation Society. 
@@ -166,15 +171,27 @@ When you write a program, note the following:
 - The tape punch is on the output channel 0. 
 - The teleprinter is on the input channel 1 and the output channel 1, 
 although I don't think it was common to connect a teleprinter directly 
-(because it would lead to a waste of machine cycles). 
+(because it would have lead to a waste of machine cycles). 
 - In this emulator, Sirius has 10000 words of store(memory), but the Initial Order and Autocode 
-that come with the simulator are for 4000 words Sirius. 
+that come with the simulator are for a 4000 words Sirius. 
 For small programs, it won't matter. 
 - You can use "teleprinter" program that comes with the simulator. 
 In case you type a program using the teleprinter in this emulator, 
 it has minimal capability for correcting a tape: 
 You can load a tape, read a character and copy it to another tape or skip a character. 
 You can also connect tapes in a similar way. 
+
+In teleprinter, you can type from the keyboard of the PC. 
+As in "teleprinter" program for the simulator, ther are substitutes 
+for those keys that are not on the PC: 
+- for LF, TAB (you need Enter + TAB to finish a line), 
+- for Letter Shift/Figure Shift, right/left Ctrl
+- for "Run out", '|'
+- for "Greater than or equal to", '}'
+- for "Not equal to", '#'
+- for "Arrow", '^'
+- for "Multiply", 'x'
+- for (backspace and) "Erase", Back Space
 
 
 ### Some utility programs 
@@ -202,7 +219,7 @@ and punches the resulting code to the output tape.
 (It rewrites back the original code if successful, but if unsuccessful the result is unknown.)
 
 
-### Plans
+## Plans
 
 Things I might do in the future: 
 
@@ -212,20 +229,22 @@ so I might fix this.
 - Build up a "personal" "mini-computer like" computing environment: 
 Something like TECO, another game, tiny basic perhaps, etc. 
 Of course, this is an anachronistic project. 
+- Try to reconstruct a "Library Tape" from the subroutines contained in Autocode Compiler, 
+together with "Assembly programme". 
 - Another old computer --- ETL Mark IV or parametron computer PC-1 from Japan, perhaps. 
 
-### Acknowledgement
+## Acknowledgement
 
 The documents and the simulator from the Computer Conservation Society was essential 
 in developing this emulator. 
 
-### Contact
+## Contact
 
 Write as an issue or send me an e-mail, 
 but since this is a holiday project, it may take a week or more before I respond. 
 
 
-### License
+## License
 
 I haven't decided on what license to choose, 
 but for the time being, use and modify it as you like. 

@@ -21,10 +21,12 @@ public class ControlBoxScript : MonoBehaviour
 
     [SerializeField]
     private Texture2D contolBoxTexture1, contolBoxTexture2, contolBoxTexture3;
+    [SerializeField]
+    private PushButtonScript btnReleaseScript;
 
     // The surface of keys is assumed to be z = this.z + CollideZ 
     const float KeyW = 0.015f, KeyH = 0.015f, KeyY = 0.0125f, 
-        KeyDownY = 0.009f, CollideZ = 0.02f,
+        KeyDownY = 0.009f, CollideZ = 0.015f,
         AccumulatorStartX = -0.0975f, AccumulatorStartZ = -0.0675f,
         KeyboardStartX = -0.0675f, KeyboardStartZ = -0.0675f, 
         WideKeyX = 0.1f, RadioKeyX = 0.0925f; 
@@ -235,6 +237,17 @@ public class ControlBoxScript : MonoBehaviour
             if (pressTimeout <= 0.0f)
                 releaseKey(currentlyPressed);
         }
+
+        if (btnReleaseScript.isPushed()) 
+        {
+            for(int i = 0; i < 10; i++)
+            {
+                if (pressed[i] >= 0) {
+                    releaseKey(keyboard[i, pressed[i]]);
+                    pressed[i] = -1;
+                }
+            }
+        }
     }
 
     GameObject currentlyPressed;
@@ -260,13 +273,16 @@ public class ControlBoxScript : MonoBehaviour
     private void OnMouseDown()
     {
         int i, j;
-        Vector3 screenPoint = Camera.main.WorldToScreenPoint(transform.position);
-        Vector3 p =  Quaternion.Inverse(transform.rotation) *( Camera.main.ScreenToWorldPoint(
-            new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenPoint.z - CollideZ)) - transform.position);
+        Vector3 dir = Quaternion.Inverse(transform.rotation) * 
+                Camera.main.ScreenPointToRay(Input.mousePosition).direction;
+        Vector3 q = Quaternion.Inverse(transform.rotation) * 
+                (Camera.main.transform.position - transform.position);
+        float px = q.x + dir.x * (CollideZ - q.y) / dir.y; 
+        float pz = q.z + dir.z * (CollideZ - q.y) / dir.y;
 
         // check keyboard
-        i = (int) Math.Round((p.x - KeyboardStartX) / KeyW); 
-        j = (int) Math.Round((p.z - KeyboardStartZ) / KeyH);
+        i = (int) Math.Round((px - KeyboardStartX) / KeyW); 
+        j = (int) Math.Round((pz - KeyboardStartZ) / KeyH);
         if (i >= 0 && i < 10 && j >= 0 && j < 10)
         {
             if (pressed[i] >= 0)
@@ -278,8 +294,8 @@ public class ControlBoxScript : MonoBehaviour
         }
 
         // check accumulator keys
-        i = (int) Math.Round((p.x - AccumulatorStartX) / KeyW);
-        j = (int) Math.Round((p.z - AccumulatorStartZ) / KeyH);
+        i = (int) Math.Round((px - AccumulatorStartX) / KeyW);
+        j = (int) Math.Round((pz - AccumulatorStartZ) / KeyH);
         if (i == 0 && j >= 0 && j < 10)
         {
             releaseKey(accumulatorKeys[_selectedAccumulator]); 
@@ -288,8 +304,8 @@ public class ControlBoxScript : MonoBehaviour
         }
 
         // check other keys
-        i = (int)Math.Round((p.x - RadioKeyX) / KeyW);
-        j = (int)Math.Round((p.z - AccumulatorStartZ) / KeyH);
+        i = (int)Math.Round((px - RadioKeyX) / KeyW);
+        j = (int)Math.Round((pz - AccumulatorStartZ) / KeyH);
         if (i >= 0 && i < 2 && j >= 0 && j < 10)
         {
             bool newFlag = (i == 1);
