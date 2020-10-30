@@ -246,5 +246,5 @@ but since this is a holiday project, it may take a week or more before I respond
 
 ## License
 
-I haven't decided on what license to choose, 
-but for the time being, use and modify it as you like. 
+[Unlicense](https://unlicense.org) applies to the current version. 
+(Other licenses might apply to future versions.)
