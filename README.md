@@ -32,6 +32,8 @@ Especially, the first link contains a gate-level simulator of Sirius, programmin
 
 ## This emulator
 
+![Screenshot](screenshot.png).
+
 I wanted to know what it is like to program a computer with a teleprinter and  paper tapes, 
 so I made this emulator. 
 
@@ -50,7 +52,7 @@ I checked them on the simulator.
 but I don't think it works 100% correctly. 
 Where it differs from the simulator, I believe the simulator is right. 
 
-- Visually, it is not so realistic: [Screenshot](screenshot.png). 
+- Visually, it is not so realistic, as you see from the screenshot. 
 For example, the whole system floats in the air, 
 tapes and printed paper are cylindrical, 
 keyboards are placed vertically, and so on. 
@@ -223,6 +225,7 @@ and punches the resulting code to the output tape.
 
 Things I might do in the future: 
 
+- Write documents on programming on Sirius, including a tutorial. 
 - Clean up the code and assets. 
 For example, the internal BCD code currently used is a little different from the one in the real Sirius, 
 so I might fix this. 
@@ -237,6 +240,10 @@ together with "Assembly programme".
 
 The documents and the simulator from the Computer Conservation Society was essential 
 in developing this emulator. 
+
+"Linux Libertine" and "Biolinum" fonts, 
+licensed under the SIL Open Font License, Version 1.1, 
+are used on buttons and the indicator panel. 
 
 ## Contact
 
