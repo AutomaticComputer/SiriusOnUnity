@@ -87,7 +87,8 @@ The layout of the keyboard on the teleprinter is almost certainly wrong.
 Just unpack the [binary](SiriusOnUnity_binary.zip) 
 or build it yourself. 
 
-Or you can try the [WebGL version](https://automaticcomputer.github.io/SiriusOnUnity/SiriusOnUnity_WebGL/index.html). 
+I am also trying to put a [WebGL version](https://automaticcomputer.github.io/SiriusOnUnity/SiriusOnUnity_WebGL/index.html), 
+but it seems that this is not working yet. 
 
 
 ### Trying the emulator
