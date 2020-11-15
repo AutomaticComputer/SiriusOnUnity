@@ -1,0 +1,16 @@
+{
+"companyName": "AutomaticComputer",
+"productName": "SiriusOnUnity",
+"productVersion": "0.3.2",
+"dataUrl": "SiriusOnUnity_WebGL.data.unityweb",
+"wasmCodeUrl": "SiriusOnUnity_WebGL.wasm.code.unityweb",
+"wasmFrameworkUrl": "SiriusOnUnity_WebGL.wasm.framework.unityweb",
+"graphicsAPI": ["WebGL 2.0","WebGL 1.0"],
+"webglContextAttributes": {"preserveDrawingBuffer": false},
+"splashScreenStyle": "Dark",
+"backgroundColor": "#231F20",
+"cacheControl": {"default": "must-revalidate"},
+"developmentBuild": false,
+"multithreading": false,
+"unityVersion": "2019.4.14f1"
+}
