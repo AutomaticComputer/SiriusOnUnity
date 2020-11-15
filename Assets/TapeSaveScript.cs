@@ -22,7 +22,7 @@ public class TapeSaveScript : MonoBehaviour
     {
         string fileNameBase, fileName;
 
-        fileNameBase = Application.dataPath + @"/Tapes/" + System.DateTime.Now.ToString("yyyyMMddHHmmss");
+        fileNameBase = Application.persistentDataPath + @"/Tapes/" + System.DateTime.Now.ToString("yyyyMMddHHmmss");
 
         for(int i=0; ; i++) {
             if (i == 0)

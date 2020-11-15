@@ -52,6 +52,10 @@ public class PrinterDrumScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        string filePath = Application.persistentDataPath + @"/Printouts/";
+        if (!Directory.Exists(filePath)) 
+            Directory.CreateDirectory(filePath);
+
         savedEulerAngles = gameObject.transform.localEulerAngles;
 
         tape_to_font_fs = new int[]
@@ -233,7 +237,7 @@ public class PrinterDrumScript : MonoBehaviour
 
         string fileNameBase, fileName;
 
-        fileNameBase = Application.dataPath + @"/Printouts/" + System.DateTime.Now.ToString("yyyyMMddHHmmss");
+        fileNameBase = Application.persistentDataPath + @"/Printouts/" + System.DateTime.Now.ToString("yyyyMMddHHmmss");
 
         for(int i=0; ; i++) {
             if (i == 0)

@@ -16,6 +16,23 @@ public class TapeLibraryScript : MonoBehaviour
 
     void Start()
     {
+        string filePath = Application.persistentDataPath + @"/Tapes/";
+        if (!Directory.Exists(filePath)) 
+            Directory.CreateDirectory(filePath);
+        string filePath0 = Application.streamingAssetsPath + @"/Tapes/";
+
+        DirectoryInfo dir = new DirectoryInfo(filePath0);
+        List<FileInfo> infoList = new List<FileInfo>();
+        infoList.AddRange(dir.GetFiles("*.ptw"));
+        infoList.AddRange(dir.GetFiles("*.ptr"));
+        infoList.AddRange(dir.GetFiles("*.ptp"));
+        infoList.AddRange(dir.GetFiles("*.txt"));
+
+        foreach (FileInfo f in infoList)
+        {
+            File.Copy(filePath0 + f.Name, filePath + f.Name, true);
+        }
+
         readTapeScript = null;
     }
 
@@ -30,7 +47,7 @@ public class TapeLibraryScript : MonoBehaviour
             return;
         readTapeScript = t;
 
-        string filePath = Application.dataPath + @"/Tapes/";
+        string filePath = Application.persistentDataPath + @"/Tapes/";
 
         DirectoryInfo dir = new DirectoryInfo(filePath);
         List<FileInfo> infoList = new List<FileInfo>();

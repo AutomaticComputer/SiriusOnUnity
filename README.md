@@ -87,6 +87,7 @@ The layout of the keyboard on the teleprinter is almost certainly wrong.
 Just unpack the [binary](SiriusOnUnity_binary.zip) 
 or build it yourself. 
 
+Or you can try the [WebGL version](SiriusOnUnity_WebGL/index.html). 
 
 
 ### Trying the emulator
@@ -114,7 +115,7 @@ which in this case holds the location where the program is being stored.
 A number of holes are punched (printed, actually) on the tape in the right of the computer. 
 When Sirius stops with "99 Wait" indicator on, 
 push "SAVE" button on the tape punch. 
-It saves the data into "SiriusOnUnity_Data/Tapes/" 
+It saves the data into "(User directory)\AppData\LocalLow\AutomaticComputer\SiriusOnUnity\Tapes\\" 
 as "yyyyMMddHHmmss.ptp" (yyyyMMddHHmmss is the current date and time, 
 and if a file with this name exists, an extra number is appended). 
 
@@ -123,13 +124,15 @@ press the "PUNCH" button on the teleprinter to suppress punching,
 and then press the "READ" button. 
 The contents of the tape are read and printed. 
 You can save the output as an image with "CUT" button. 
-The data is saved in "SiriusOnUniti_Data/Printouts/" as "yyyyMMddHHmmss.png". 
+The data is saved in 
+"(User directory)\AppData\LocalLow\AutomaticComputer\SiriusOnUnity\Printouts\\" as "yyyyMMddHHmmss.png". 
 (If you built the binary from the source, you need to 
 create the "Printouts" directory.)
 
 5. To quit, just close the window. 
 
-You can try other tapes with the extension "ptw": 
+You can try other tapes with the extension "ptw". 
+(On the WebGL version, I think you can only try these tapes.)
 
 - Mandelblot.ptw draws a Mandelblot set via the tape punch. 
 If you are not patient enough, you can click on the left of the wheel in the bottom 
@@ -163,6 +166,8 @@ You can save and print the result during the calculation.
 - "Lunar_ac.ptr" is a port of Jim Storer's original Lunar Lander code in FOCAL on PDP-8. 
 It gives almost the same result as the original one, 
 and took much less time to code than "Lunar_pi.ptw" or "Lunar_mc.ptr". 
+- "Hamurabi_ac.ptr" is a port of David H. Ahl's version of 
+[Hamurabi (Wikipedia)](https://en.wikipedia.org/wiki/Hamurabi_(video_game))
 
 "Initial Order" and "Autocode", along with other programs and document, 
 are distributed along with the simulator from the Computer Conservation Society. 
@@ -182,6 +187,9 @@ In case you type a program using the teleprinter in this emulator,
 it has minimal capability for correcting a tape: 
 You can load a tape, read a character and copy it to another tape or skip a character. 
 You can also connect tapes in a similar way. 
+- You can add, delete or rename tapes in 
+"(User directory)\AppData\LocalLow\AutomaticComputer\SiriusOnUnity\Tapes\\". 
+The tapes that come with the emulator are rewritten every time the emulator is launched. 
 
 In teleprinter, you can type from the keyboard of the PC. 
 As in "teleprinter" program for the simulator, ther are substitutes 
