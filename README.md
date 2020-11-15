@@ -101,8 +101,6 @@ To try them, follow these steps:
 1. Push the "LOAD" button on the leftmost tape reader. 
 This brings up several program tapes. 
 Choose "HelloWorld.ptw", for example.
-(If you built the binary from the source, you need to 
-copy the "Tapes" directory from Assets.)
 
 2. Make sure that "Manual" and "WAIT" keys in the Control Box (main console) are pressed, 
 and push the "PRIMARY INPUT" button. 
@@ -126,8 +124,6 @@ The contents of the tape are read and printed.
 You can save the output as an image with "CUT" button. 
 The data is saved in 
 "(User directory)\AppData\LocalLow\AutomaticComputer\SiriusOnUnity\Printouts\\" as "yyyyMMddHHmmss.png". 
-(If you built the binary from the source, you need to 
-create the "Printouts" directory.)
 
 5. To quit, just close the window. 
 
