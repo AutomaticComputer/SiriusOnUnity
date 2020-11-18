@@ -84,10 +84,13 @@ The layout of the keyboard on the teleprinter is almost certainly wrong.
 
 ### Installation
 
-Just unpack the [binary](SiriusOnUnity_binary.zip) 
+Just unpack the [binary](SiriusOnUnity_Windows.zip) 
 or build it yourself. 
 
-Or you can try the [WebGL version](https://automaticcomputer.github.io/SiriusOnUnity/SiriusOnUnity_WebGL/index.html). 
+Or, the [WebGL version](https://automaticcomputer.github.io/SiriusOnUnity/SiriusOnUnity_WebGL/index.html) 
+might work. 
+In this case, you can only try "ptw" files (see below), 
+and there is no way to retrieve the tapes and printouts. 
 
 
 ### Trying the emulator
@@ -128,7 +131,6 @@ The data is saved in
 5. To quit, just close the window. 
 
 You can try other tapes with the extension "ptw". 
-(On the WebGL version, I think you can only try these tapes.)
 
 - Mandelblot.ptw draws a Mandelblot set via the tape punch. 
 If you are not patient enough, you can click on the left of the wheel in the bottom 
@@ -185,7 +187,8 @@ You can load a tape, read a character and copy it to another tape or skip a char
 You can also connect tapes in a similar way. 
 - You can add, delete or rename tapes in 
 "(User directory)\AppData\LocalLow\AutomaticComputer\SiriusOnUnity\Tapes\\". 
-The tapes that come with the emulator are rewritten every time the emulator is launched. 
+The tapes that come with the emulator are (re)written every time 
+a new (or different) version is launched(it looks at "Tapes\version"). 
 
 In teleprinter, you can type from the keyboard of the PC. 
 As in "teleprinter" program for the simulator, ther are substitutes 

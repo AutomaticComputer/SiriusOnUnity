@@ -3037,6 +3037,18 @@ MonoBehaviour:
   miniTapePrefab: {fileID: 3355929686210127606, guid: bcc2941a20e42bb47aa3314abcfad96e,
     type: 3}
   font: {fileID: 2800000, guid: 796278bf59e4fa2419e64da3415c3990, type: 3}
+  textAssets:
+  - {fileID: 4900000, guid: 7dcc8dbf0e73bd54d9b03433d0c60856, type: 3}
+  - {fileID: 4900000, guid: adc5d6d03b9d65d4ebba650e76f7bddb, type: 3}
+  - {fileID: 4900000, guid: c07edb5fe634861478dd11af0a6be5a3, type: 3}
+  - {fileID: 4900000, guid: 56d7376ea5f0b4e42970cdb585148143, type: 3}
+  - {fileID: 4900000, guid: 97c603c45c679a94197551f952c92eb3, type: 3}
+  - {fileID: 4900000, guid: 6e7963cf24972b04480d3658ae538a13, type: 3}
+  - {fileID: 4900000, guid: 423a22cd260cf214fa7ab5d3cf18431e, type: 3}
+  - {fileID: 4900000, guid: da6c1915e50831b45a7e9ed144a7fcf2, type: 3}
+  - {fileID: 4900000, guid: 06912b2bbf5e88c468d142957c6d8613, type: 3}
+  - {fileID: 4900000, guid: 397ccd1455d50c24485c9f7e60dc853f, type: 3}
+  - {fileID: 4900000, guid: 9c1dc8ebf3a424a47a1bbbdb5e06bbb4, type: 3}
 --- !u!4 &710624250
 Transform:
   m_ObjectHideFlags: 0
@@ -4366,6 +4378,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tapeScript: {fileID: 1880306098}
+  tapeLibraryScript: {fileID: 710624249}
 --- !u!65 &995118010
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -6811,6 +6824,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tapeScript: {fileID: 1127028765}
+  tapeLibraryScript: {fileID: 710624249}
 --- !u!65 &1698059604
 BoxCollider:
   m_ObjectHideFlags: 0

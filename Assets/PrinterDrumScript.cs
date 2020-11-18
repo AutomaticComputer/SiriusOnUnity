@@ -203,6 +203,8 @@ public class PrinterDrumScript : MonoBehaviour
 
     public void printToFile()
     {
+#if UNITY_WEBGL
+#else
         Texture2D tex;
         tex = new Texture2D(560, bufferLines * pixelsPerChar + 64, TextureFormat.RGB24, false);
 
@@ -249,6 +251,7 @@ public class PrinterDrumScript : MonoBehaviour
         }
 
         File.WriteAllBytes(fileName, bytes);
+#endif
 
         clear();
     }

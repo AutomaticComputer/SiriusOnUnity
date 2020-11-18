@@ -7,6 +7,8 @@ public class TapeSaveScript : MonoBehaviour
 {
     [SerializeField]
     private TapeScript tapeScript;
+    [SerializeField]
+    private TapeLibraryScript tapeLibraryScript;
     // Start is called before the first frame update
     void Start()
     {
@@ -20,31 +22,20 @@ public class TapeSaveScript : MonoBehaviour
 
     private void OnMouseDown()
     {
-        string fileNameBase, fileName;
-
-        fileNameBase = Application.persistentDataPath + @"/Tapes/" + System.DateTime.Now.ToString("yyyyMMddHHmmss");
-
-        for(int i=0; ; i++) {
-            if (i == 0)
-                fileName = fileNameBase + ".ptp";
-            else
-                fileName = fileNameBase + i + ".ptp";
-            if (!System.IO.File.Exists(fileName))
-                break;
-        }
-
-        System.IO.StreamWriter file = new System.IO.StreamWriter(fileName);
+        StringWriter sw = new StringWriter();
         byte[] d = tapeScript.getData();
 
         for(int i = 0; i < d.Length; i++)
         {
-            file.Write(d[i]);
-            file.Write(' ');
+            sw.Write(d[i]);
+            sw.Write(' ');
             if (i % 10 == 9)
-                file.WriteLine();
+                sw.WriteLine();
         }
-        file.WriteLine();
-        file.Close();
+        sw.WriteLine();
+        sw.Close();
+
+        tapeLibraryScript.save(sw.ToString());
 
         tapeScript.clear();
     }
