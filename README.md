@@ -92,7 +92,6 @@ might work.
 In this case, you can only try "ptw" files (see below), 
 and there is no way to retrieve the tapes and printouts. 
 
-
 ### Trying the emulator
 
 After you start up the program, you can use arrow keys and PageUp/PageDown 
