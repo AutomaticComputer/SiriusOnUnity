@@ -50,7 +50,7 @@ public class TeleprinterKeyboardScript : MonoBehaviour
         };
         keyFont = new int[]
         {
-        1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 21, 22, 62, 63, 32, // 32: runout
+        1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 21, 22, 62, 63, 32, // 32: blank
         49, 55, 37, 50, 52, 57, 53, 41, 47, 48, 26, 10, 25, 19, 20,
         30, 33, 51, 36, 38, 39, 40, 42, 43, 44, 61, 12, 18, 30, 
         13, 58, 56, 35, 54, 34, 46, 45, 31, 23, 11, 17, 13,
@@ -58,7 +58,7 @@ public class TeleprinterKeyboardScript : MonoBehaviour
         };
         keyFS = new int[]
         {
-        1, 2, 19, 4, 21, 22, 7, 8, 25, 16, 5, 6, -1, 31, 32, // 32: runout
+        1, 2, 19, 4, 21, 22, 7, 8, 25, 16, 5, 6, -1, 31, 32, // 32: blnk
         -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 10, 26, 9, 3, 20,
         30, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 28, 18, 30,
         13, -1, 24, -1, 12, -1, 29, -1, 15, 23, 11, 17, 13,
@@ -165,7 +165,7 @@ public class TeleprinterKeyboardScript : MonoBehaviour
                     c = (byte)keyLS[k];
             }
         }
-        if (c == 32) // runout
+        if (c == 32) // blank
             c = 0;
     }
 
@@ -231,7 +231,7 @@ public class TeleprinterKeyboardScript : MonoBehaviour
             else
                 c = 0xff;
         }
-        if (c == 32) // runout
+        if (c == 32) // blank
         {
             c = 0;
         }

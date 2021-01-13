@@ -474,7 +474,7 @@ MonoBehaviour:
     type: 3}
   wideKeyPrefab: {fileID: 66916427153607672, guid: 5f943b668a1f55443a03a46e156f2b4e,
     type: 3}
-  teleprinterFont: {fileID: 2800000, guid: 9fd0097419841b44cba8dd070a218f70, type: 3}
+  teleprinterFont: {fileID: 2800000, guid: e8be80d7d86c8e24ea8fe2d0ec00add0, type: 3}
 --- !u!65 &89223394
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3510,7 +3510,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c0238dd3e77763a4ca74e95ecd3bc193, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fontTexture: {fileID: 2800000, guid: 9fd0097419841b44cba8dd070a218f70, type: 3}
+  fontTexture: {fileID: 2800000, guid: e8be80d7d86c8e24ea8fe2d0ec00add0, type: 3}
 --- !u!4 &712100532 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 84ec10bb9baf60a4ebccde25687e93f0,

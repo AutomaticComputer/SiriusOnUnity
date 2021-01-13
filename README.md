@@ -194,7 +194,7 @@ As in "teleprinter" program for the simulator, ther are substitutes
 for those keys that are not on the PC: 
 - for LF, TAB (you need Enter + TAB to finish a line), 
 - for Letter Shift/Figure Shift, right/left Ctrl
-- for "Run out", '|'
+- for "Blank tape", '|'
 - for "Greater than or equal to", '}'
 - for "Not equal to", '#'
 - for "Arrow", '^'
