@@ -96,6 +96,7 @@ and there is no way to retrieve the tapes and printouts.
 
 After you start up the program, you can use arrow keys and PageUp/PageDown 
 to move the camera around. 
+You can also move/zoom by sliding/pinching on touch screens. 
 
 I coded and punched a few sample programs. 
 To try them, follow these steps: 
