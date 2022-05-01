@@ -9,12 +9,15 @@ public class TeleprinterKeyboardScript : MonoBehaviour
 
     [SerializeField]
     private Texture2D teleprinterFont;
+    private const int charWidth = 12, charHeight = 24;
 
+    [SerializeField]
+    private GlobalVariablesScript globalVariablesScript;
     private GameObject[] keyboard;
 
-    const float KeyW = 0.015f, KeyH = 0.015f, KeyY = 0.0125f,
+    const float KeyW = 0.022f, KeyH = 0.022f, KeyY = 0.015f,
         KeyDownY = 0.0075f, CollideZ = 0.015f,
-        KeyboardStartX = -0.12f, KeyboardStartZ = 0.04f;
+        KeyboardStartX = -0.19f, KeyboardStartZ = 0.04f;
 
     private char[] keyCharFS, keyCharLS;
     private int[] keyX, keyZ, keyWide, keyFont, keyFS, keyLS;
@@ -91,6 +94,9 @@ public class TeleprinterKeyboardScript : MonoBehaviour
 
         keyboard = new GameObject[keyX.Length];
 
+        Color lightColor = new Color(90.0f/255.0f, 142.0f/255.0f, 64.0f/255.0f), 
+              darkColor = new Color(38.0f/255.0f, 69.0f/255.0f, 33.0f/255.0f); 
+        
         for (int i = 0; i < keyboard.Length; i++)
         {
             if (keyWide[i] == 0)
@@ -109,14 +115,14 @@ public class TeleprinterKeyboardScript : MonoBehaviour
                      KeyY, KeyboardStartZ - keyZ[i] * KeyH),
                      keyPrefab.transform.rotation * transform.rotation);
             }
-            Texture2D texture = new Texture2D(12, 16);
-            for (int x = 0; x < 12; x++)
-                for (int y = 0; y < 16; y++)
+            Texture2D texture = new Texture2D(charWidth * 2, charHeight * 2);
+            for (int x = 0; x < charWidth * 2; x++)
+                for (int y = 0; y < charHeight * 2; y++)
                     texture.SetPixel(x, y, Color.white);
-            texture.SetPixels(3, 4, 6, 8,
-                teleprinterFont.GetPixels(keyFont[i] * 6, 0, 6, 8));
+            texture.SetPixels(charWidth/2, charHeight/2, charWidth, charHeight,
+                teleprinterFont.GetPixels(keyFont[i] * charWidth, 0, charWidth, charHeight));
             keyboard[i].GetComponent<Renderer>().material.mainTexture = texture;
-            keyboard[i].GetComponent<KeyColorScript>().setColors(Color.white, Color.gray);
+            keyboard[i].GetComponent<KeyColorScript>().setColors(lightColor, darkColor);
             texture.Apply();
         }
 
@@ -153,16 +159,18 @@ public class TeleprinterKeyboardScript : MonoBehaviour
             return;
         }
 
-        string s = Input.inputString;
-        if (s.Length > 0)
-        {
-            char ch = s[0];
-            for (int k = 0; k < keyboard.Length; k++)
+        if (!globalVariablesScript.keyIsDisabled()) {
+            string s = Input.inputString;
+            if (s.Length > 0)
             {
-                if (!isLetterShift && keyCharFS[k] == ch)
-                    c = (byte)keyFS[k];
-                if (isLetterShift && keyCharLS[k] == ch)
-                    c = (byte)keyLS[k];
+                char ch = s[0];
+                for (int k = 0; k < keyboard.Length; k++)
+                {
+                    if (!isLetterShift && keyCharFS[k] == ch)
+                        c = (byte)keyFS[k];
+                    if (isLetterShift && keyCharLS[k] == ch)
+                        c = (byte)keyLS[k];
+                }
             }
         }
         if (c == 32) // blank

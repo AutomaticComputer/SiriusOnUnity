@@ -1,20 +1,36 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class TapeLibraryScript : MonoBehaviour
 {
     // Start is called before the first frame update
     public GameObject miniTapePrefab;
+    public GameObject renamePanelPrefab;
+    public GameObject deletePanelPrefab;
+    public GameObject errorPanelPrefab;
+    public GameObject canvas;
 
     private GameObject[] tapes;
 
     private TapeScript readTapeScript;
+    private Vector3 minitapePos;
+    private GameObject dialogPanel;
     [SerializeField]
     private Texture2D font;
     [SerializeField]
     private List<TextAsset> textAssets;
+    private string currentFileName;
+    [SerializeField]
+    private GlobalVariablesScript globalVariablesScript;
+
+    private enum Mode {
+        Idle, Save, Load, Delete, Rename
+    }
+    private Mode currentMode;
 
 #if UNITY_WEBGL
     private class TapePair 
@@ -54,6 +70,8 @@ public class TapeLibraryScript : MonoBehaviour
         }
 #endif
         readTapeScript = null;
+
+        currentMode = Mode.Idle;
     }
 
     // Update is called once per frame
@@ -63,17 +81,40 @@ public class TapeLibraryScript : MonoBehaviour
 
     public void setTapeScript(TapeScript t)
     {
-        if (readTapeScript != null)
+        if (currentMode != Mode.Idle)
             return;
         readTapeScript = t;
+        minitapePos = t.gameObject.transform.position 
+            + new Vector3(0.0f, 0.15f, 0.0f);
+        currentMode = Mode.Load;
+        instantiateTapes();
+    }
 
+    public void startRename(Vector3 pos)
+    {
+        if (currentMode != Mode.Idle)
+            return;
+        currentMode = Mode.Rename;
+        minitapePos = pos;
+        instantiateTapes();
+    }
+    public void startDelete(Vector3 pos)
+    {
+        if (currentMode != Mode.Idle)
+            return;
+        currentMode = Mode.Delete;
+        minitapePos = pos;
+        instantiateTapes();
+    }
+    public void instantiateTapes()
+    {
 #if UNITY_WEBGL
         tapes = new GameObject[tapeList.Count];
 
         int i = 0;
         foreach(TapePair tp in tapeList) {
             tapes[i] = Instantiate(miniTapePrefab,
-                t.gameObject.transform.position + new Vector3(-0.025f, 0.12f + 0.01f * i, 0.0f), 
+                minitapePos + new Vector3(0.0f, 0.01f * i, 0.0f), 
                 miniTapePrefab.transform.rotation);
             tapes[i].GetComponent<MiniTapeScript>().setName(tp.name);
             tapes[i].GetComponent<MiniTapeScript>().setData(tp.content);
@@ -86,6 +127,7 @@ public class TapeLibraryScript : MonoBehaviour
 
         DirectoryInfo dir = new DirectoryInfo(filePath);
         List<FileInfo> infoList = new List<FileInfo>();
+
         infoList.AddRange(dir.GetFiles("*.ptw"));
         infoList.AddRange(dir.GetFiles("*.ptr"));
         infoList.AddRange(dir.GetFiles("*.ptp"));
@@ -96,7 +138,7 @@ public class TapeLibraryScript : MonoBehaviour
         foreach (FileInfo f in infoList)
         {
             tapes[i] = Instantiate(miniTapePrefab,
-                t.gameObject.transform.position + new Vector3(-0.025f, 0.12f + 0.01f * i, 0.0f), 
+                minitapePos + new Vector3(0.0f, 0.01f * i, 0.0f), 
                 miniTapePrefab.transform.rotation);
             tapes[i].GetComponent<MiniTapeScript>().setName(f.Name);
             tapes[i].GetComponent<MiniTapeScript>().setData(System.IO.File.ReadAllText(f.ToString()));
@@ -109,15 +151,137 @@ public class TapeLibraryScript : MonoBehaviour
 
     public void selected(MiniTapeScript m)
     {
-        readTapeScript.readString(m.getData());
+        currentFileName = m.getName();
+        switch(currentMode) {
+            case Mode.Load:
+                readTapeScript.readString(m.getData());
+                readTapeScript = null;
+                currentMode = Mode.Idle;
+                break;
+            case Mode.Delete:
+                dialogPanel = Instantiate(deletePanelPrefab, new Vector3(0, 0, 0), Quaternion.identity);
+                dialogPanel.transform.SetParent(canvas.transform, false);
+                dialogPanel.transform.Find("DeleteText").gameObject.GetComponent<Text>().text = 
+                    "Delete \"" + currentFileName + "\" ?";
+                {
+                    UIButtonScript b;
+                    b = dialogPanel.transform.Find("DeleteButton").gameObject.GetComponent<UIButtonScript>();
+                    b.tapeLibrary = this;
+                    b.action = "Delete";
+                    b = dialogPanel.transform.Find("CancelButton").gameObject.GetComponent<UIButtonScript>();
+                    b.tapeLibrary = this;
+                    b.action = "Cancel";
+                }
+                break;
+            case Mode.Rename:
+                globalVariablesScript.setKeyDisabled(true);
+                dialogPanel = Instantiate(renamePanelPrefab, new Vector3(0, 0, 0), Quaternion.identity);
+                dialogPanel.transform.SetParent(canvas.transform, false);
+                dialogPanel.transform.Find("RenameText").gameObject.GetComponent<Text>().text = 
+                    "Rename \"" + currentFileName + "\" to ?";
+                {
+                    UIButtonScript b;
+                    b = dialogPanel.transform.Find("RenameButton").gameObject.GetComponent<UIButtonScript>();
+                    b.tapeLibrary = this;
+                    b.action = "Rename";
+                    b = dialogPanel.transform.Find("CancelButton").gameObject.GetComponent<UIButtonScript>();
+                    b.tapeLibrary = this;
+                    b.action = "Cancel";
+                }
+                break;
+            default:
+                break;
+        }
+
         for (int i = 0; i < tapes.Length; i++)
         {
             Destroy(tapes[i]);
         }
         tapes = null;
-        readTapeScript = null;
     }
 
+    public void dialogCallback(string action)
+    {
+        bool moveError = false;
+        if (action == "Delete")
+        {
+#if UNITY_WEBGL
+        for(int i = 0 ; i < tapeList.Count; i++) {
+            TapePair tp = tapeList[i]; 
+            if (tp.name.Equals(currentFileName)) {
+                tapeList.RemoveAt(i);
+                break;
+            }
+        }
+#else
+            File.Delete(Application.persistentDataPath + @"/Tapes/"
+                + currentFileName);
+#endif
+        }
+
+        if (action == "Rename")
+        {
+            string newFileName = 
+                dialogPanel.transform.Find("InputField").gameObject.GetComponent<InputField>().text;
+            string extension = System.IO.Path.GetExtension(newFileName);
+            if (!(extension.Equals(".ptw") || extension.Equals(".ptr") || 
+                extension.Equals(".ptp") || extension.Equals(".txt"))) {
+                moveError = true;
+            }
+            else
+            {
+#if UNITY_WEBGL
+                for(int i = 0 ; i < tapeList.Count; i++) {
+                    TapePair tp = tapeList[i]; 
+                    if (tp.name.Equals(newFileName)) {
+                        moveError = true;
+                    }
+                }
+                if (!moveError) {
+                    for(int i = 0 ; i < tapeList.Count; i++) {
+                        TapePair tp = tapeList[i]; 
+                        if (tp.name.Equals(currentFileName)) {
+                            tp.name = newFileName;
+                        }
+                    }
+                }
+#else
+                try 
+                {
+                    File.Move(
+                        Application.persistentDataPath + @"/Tapes/" + currentFileName, 
+                        Application.persistentDataPath + @"/Tapes/" + newFileName);
+                }
+                catch(Exception ex) 
+                {
+                    moveError = true;
+                }
+#endif
+            }
+        }
+
+        if (action == "ErrorOk")
+        {
+            // Nothing to do.
+        }
+
+        Destroy(dialogPanel);
+
+        if (moveError)
+        {
+            dialogPanel = Instantiate(errorPanelPrefab, new Vector3(0, 0, 0), Quaternion.identity);
+            dialogPanel.transform.SetParent(canvas.transform, false);
+            {
+                UIButtonScript b;
+                b = dialogPanel.transform.Find("OkButton").gameObject.GetComponent<UIButtonScript>();
+                b.tapeLibrary = this;
+                b.action = "ErrorOk";
+            }
+        }
+
+        globalVariablesScript.setKeyDisabled(false);
+        currentMode = Mode.Idle;
+    }
     public void save(string s)
     {
         string fileNameBase, fileName;

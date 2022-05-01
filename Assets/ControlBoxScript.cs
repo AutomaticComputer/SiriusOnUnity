@@ -25,11 +25,11 @@ public class ControlBoxScript : MonoBehaviour
     private PushButtonScript btnReleaseScript;
 
     // The surface of keys is assumed to be z = this.z + CollideZ 
-    const float KeyW = 0.015f, KeyH = 0.015f, KeyY = 0.0125f, 
-        KeyDownY = 0.009f, CollideZ = 0.015f,
-        AccumulatorStartX = -0.0975f, AccumulatorStartZ = -0.0675f,
-        KeyboardStartX = -0.0675f, KeyboardStartZ = -0.0675f, 
-        WideKeyX = 0.1f, RadioKeyX = 0.0925f; 
+    const float KeyW = 0.021f, KeyH = 0.021f, KeyY = 0.005f, 
+        KeyDownY = 0.007f, CollideZ = 0.015f,
+        AccumulatorStartX = -0.14f, AccumulatorStartZ = -0.07f,
+        KeyboardStartX = -0.1f, KeyboardStartZ = -0.07f, 
+        WideKeyX = 0.14f, RadioKeyX = 0.13f; 
 
     // Start is called before the first frame update
     void Start()

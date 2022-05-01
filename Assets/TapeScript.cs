@@ -21,6 +21,7 @@ public class TapeScript : MonoBehaviour
     private float readTimeLeft, punchTimeLeft;
 
     public int charsBeforeCurrent; // how many characters to show before the current position. 
+    public bool isReverse = false;
     void Start()
     {
         savedEulerAngles = gameObject.transform.localEulerAngles;
@@ -38,11 +39,14 @@ public class TapeScript : MonoBehaviour
                 for (int x = 0; x < 8; x++)
                     for (int y = 0; y < 8; y++)
                     {
+                        int x1 = i * 8 + x;
+                        if (isReverse)
+                            x1 = 47 - x1;
                         if ((i == 2 && (2 * x - 7) * (2 * x - 7) + (2 * y - 7) * (2 * y - 7) <= 9) ||
                             (b && (2 * x - 7) * (2 * x - 7) + (2 * y - 7) * (2 * y - 7) <= 28))
-                            punchedTexture.SetPixel(i * 8 + x, j * 8 + y, Color.black);
+                            punchedTexture.SetPixel(x1, j * 8 + y, Color.black);
                         else
-                            punchedTexture.SetPixel(i * 8 + x, j * 8 + y, Color.white);
+                            punchedTexture.SetPixel(x1, j * 8 + y, Color.white);
                     }
             }
         for (int i = 0; i < 6; i++)
@@ -65,7 +69,7 @@ public class TapeScript : MonoBehaviour
             isDrawn = false;
         }
         gameObject.transform.localEulerAngles = savedEulerAngles + 
-            new Vector3((currentPosition % charsPerRoll) * (360.0f / charsPerRoll), 0, 0);
+            new Vector3(0, 0, -(currentPosition % charsPerRoll) * (360.0f / charsPerRoll));
 
         if (readTimeLeft < readTime)
             readTimeLeft += Time.deltaTime;
@@ -157,7 +161,7 @@ public class TapeScript : MonoBehaviour
             return 0xff;
 
         b = data[currentPosition];
-        if (currentPosition >= charsBeforeCurrent)
+//        if (currentPosition >= charsBeforeCurrent)
         {
             int p = currentPosition + charsPerRoll - charsBeforeCurrent;
             byte c = 32;

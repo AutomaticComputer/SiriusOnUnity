@@ -55,6 +55,11 @@ public class MiniTapeScript : MonoBehaviour
         data = s;
     }
 
+    public string getName()
+    {
+        return fileName;
+    }
+
     public string getData()
     {
         return data;

@@ -6,6 +6,7 @@
 [Ll]ogs/
 !docs/SiriusOnUnity_WebGL/Build/
 SiriusOnUnity_Windows/
+SiriusOnUnity_MacOSX.app/
 
 # Uncomment this line if you wish to ignore the asset store tools plugin
 # [Aa]ssets/AssetStoreTools*
