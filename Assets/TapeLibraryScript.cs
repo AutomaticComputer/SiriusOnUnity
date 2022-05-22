@@ -1,13 +1,23 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System;
 using UnityEngine;
 using UnityEngine.UI;
+#if UNITY_WEBGL && !UNITY_EDITOR
+using System.Runtime.InteropServices;
+#endif
 
 public class TapeLibraryScript : MonoBehaviour
 {
-    // Start is called before the first frame update
+#if UNITY_WEBGL && !UNITY_EDITOR
+    [DllImport("__Internal")]
+    private static extern void TapeUpdownInit();
+    [DllImport("__Internal")]
+    private static extern void AddTapeDownload(string name, string data);
+#endif
+     // Start is called before the first frame update
     public GameObject miniTapePrefab;
     public GameObject renamePanelPrefab;
     public GameObject deletePanelPrefab;
@@ -29,10 +39,13 @@ public class TapeLibraryScript : MonoBehaviour
 
     private enum Mode {
         Idle, Save, Load, Delete, Rename
+#if UNITY_WEBGL && !UNITY_EDITOR
+        , Download
+#endif
     }
     private Mode currentMode;
 
-#if UNITY_WEBGL
+#if UNITY_WEBGL && !UNITY_EDITOR
     private class TapePair 
     { 
         public TapePair(string n, string c) 
@@ -44,11 +57,28 @@ public class TapeLibraryScript : MonoBehaviour
         public string content;
     };
     private List<TapePair> tapeList;
+
+    private string uploadName;
+
+    IEnumerator LoadTape(string url) {
+        WWW www = new WWW (url);
+        yield return www;
+        save(www.text, uploadName);
+    }
+
+    void UploadName(string name) {
+        uploadName = name;
+    }
+    void Upload(string url) {
+        StartCoroutine(LoadTape(url));
+    }
 #endif
 
     void Start()
     {
-#if UNITY_WEBGL
+#if UNITY_WEBGL && !UNITY_EDITOR
+        TapeUpdownInit(); 
+
         tapeList = new List<TapePair>();
         foreach(TextAsset ta in textAssets) {
             tapeList.Add(new TapePair(ta.name, ta.ToString()));
@@ -106,9 +136,21 @@ public class TapeLibraryScript : MonoBehaviour
         minitapePos = pos;
         instantiateTapes();
     }
+
+#if UNITY_WEBGL && !UNITY_EDITOR
+    public void startDownload(Vector3 pos)
+    {
+        if (currentMode != Mode.Idle)
+            return;
+        currentMode = Mode.Download;
+        minitapePos = pos;
+        instantiateTapes();
+    }
+#endif
+
     public void instantiateTapes()
     {
-#if UNITY_WEBGL
+#if UNITY_WEBGL && !UNITY_EDITOR
         tapes = new GameObject[tapeList.Count];
 
         int i = 0;
@@ -189,6 +231,12 @@ public class TapeLibraryScript : MonoBehaviour
                     b.action = "Cancel";
                 }
                 break;
+#if UNITY_WEBGL && !UNITY_EDITOR
+            case Mode.Download: 
+                AddTapeDownload(currentFileName, m.getData()); 
+                currentMode = Mode.Idle;
+                break;
+#endif
             default:
                 break;
         }
@@ -205,7 +253,7 @@ public class TapeLibraryScript : MonoBehaviour
         bool moveError = false;
         if (action == "Delete")
         {
-#if UNITY_WEBGL
+#if UNITY_WEBGL && !UNITY_EDITOR
         for(int i = 0 ; i < tapeList.Count; i++) {
             TapePair tp = tapeList[i]; 
             if (tp.name.Equals(currentFileName)) {
@@ -230,7 +278,7 @@ public class TapeLibraryScript : MonoBehaviour
             }
             else
             {
-#if UNITY_WEBGL
+#if UNITY_WEBGL && !UNITY_EDITOR
                 for(int i = 0 ; i < tapeList.Count; i++) {
                     TapePair tp = tapeList[i]; 
                     if (tp.name.Equals(newFileName)) {
@@ -282,23 +330,35 @@ public class TapeLibraryScript : MonoBehaviour
         globalVariablesScript.setKeyDisabled(false);
         currentMode = Mode.Idle;
     }
-    public void save(string s)
+    public void save(string s, string name = null)
     {
         string fileNameBase, fileName;
 
-#if UNITY_WEBGL
-        fileNameBase = System.DateTime.Now.ToString("yyyyMMddHHmmss");
-        fileName = fileNameBase + ".ptp";
+#if UNITY_WEBGL && !UNITY_EDITOR
+        if (name == null) {
+            fileNameBase = System.DateTime.Now.ToString("yyyyMMddHHmmss");
+            fileName = fileNameBase + ".ptp";
+        }
+        else 
+        {
+            fileName = name;
+        }
         tapeList.Add(new TapePair(fileName, s));
 #else
-        fileNameBase = Application.persistentDataPath + @"/Tapes/" + System.DateTime.Now.ToString("yyyyMMddHHmmss");
-        for(int i=0; ; i++) {
-            if (i == 0)
-                fileName = fileNameBase + ".ptp";
-            else
-                fileName = fileNameBase + i + ".ptp";
-            if (!System.IO.File.Exists(fileName))
-                break;
+        if (name == null) {
+            fileNameBase = Application.persistentDataPath + @"/Tapes/" + System.DateTime.Now.ToString("yyyyMMddHHmmss");
+            for(int i=0; ; i++) {
+                if (i == 0)
+                    fileName = fileNameBase + ".ptp";
+                else
+                    fileName = fileNameBase + i + ".ptp";
+                if (!System.IO.File.Exists(fileName))
+                    break;
+            }
+        }
+        else
+        {
+            fileName = name;
         }
 
         File.WriteAllText(fileName, s);

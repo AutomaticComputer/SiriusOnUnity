@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class RenameScript : MonoBehaviour
 {
-    public TapeLibraryScript tapeLibrary;
+    [SerializeField]
+    private TapeLibraryScript tapeLibrary;
     // Start is called before the first frame update
     void Start()
     {

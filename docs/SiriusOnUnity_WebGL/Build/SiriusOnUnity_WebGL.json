@@ -1,7 +1,7 @@
 {
 "companyName": "AutomaticComputer",
 "productName": "SiriusOnUnity",
-"productVersion": "0.4.0",
+"productVersion": "0.4.1",
 "dataUrl": "SiriusOnUnity_WebGL.data.unityweb",
 "wasmCodeUrl": "SiriusOnUnity_WebGL.wasm.code.unityweb",
 "wasmFrameworkUrl": "SiriusOnUnity_WebGL.wasm.framework.unityweb",

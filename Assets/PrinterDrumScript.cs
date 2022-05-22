@@ -2,9 +2,16 @@
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+#if UNITY_WEBGL && !UNITY_EDITOR
+using System.Runtime.InteropServices;
+#endif
 
 public class PrinterDrumScript : MonoBehaviour
 {
+#if UNITY_WEBGL && !UNITY_EDITOR
+    [DllImport("__Internal")]
+    private static extern void AddPngDownload(string name, byte[] data, int size);
+#endif
     Texture2D texture;
     [SerializeField]
     private Texture2D fontTexture;
@@ -204,8 +211,6 @@ public class PrinterDrumScript : MonoBehaviour
 
     public void printToFile()
     {
-#if UNITY_WEBGL
-#else
         Texture2D tex;
         tex = new Texture2D(charWidth * charsPerLine + horizontalMargin * 2, bufferLines * charHeight + 128, 
             TextureFormat.RGB24, false);
@@ -242,6 +247,11 @@ public class PrinterDrumScript : MonoBehaviour
 
         string fileNameBase, fileName;
 
+#if UNITY_WEBGL && !UNITY_EDITOR
+        fileNameBase = System.DateTime.Now.ToString("yyyyMMddHHmmss");
+        fileName = fileNameBase + ".png";
+        AddPngDownload(fileName, bytes, bytes.Length); 
+#else
         fileNameBase = Application.persistentDataPath + @"/Printouts/" + System.DateTime.Now.ToString("yyyyMMddHHmmss");
 
         for(int i=0; ; i++) {
